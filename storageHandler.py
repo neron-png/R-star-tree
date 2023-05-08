@@ -43,7 +43,7 @@ def fetchNextBlock():
         while file.tell() < filesize-BLOCKSIZE:
             yield file.read(BLOCKSIZE).decode('utf-8')
         else:
-            yield file.read(filesize - file.tell)
+            yield file.read(filesize - file.tell).decode('utf-8')
 
 
 records = 0
