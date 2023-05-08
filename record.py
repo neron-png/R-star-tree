@@ -20,8 +20,8 @@ Represents a stored data record in disk
 class Record:
     def __init__(self, point:Point):
         self.data = point
-        self.blockId = 0;
-        self.slotId = 0;
+        self.blockId = 0
+        self.slotId = 0
     
     def __str__(self):
         return f"""\
@@ -35,7 +35,7 @@ class Record:
     @staticmethod
     def parseXMLtoRecordsList(block:str) -> list:
         from lxml import etree
-        records = []
+        records = []  
         names = etree.fromstring(block).xpath('//node/tag[@k=\'name:en\']')
         ids = etree.fromstring(block).xpath('//node/tag[@k="name:en"]/../@id')
         LATcoordinates = etree.fromstring(block).xpath('//node/tag[@k="name:en"]/../@lat')
