@@ -1,5 +1,5 @@
 '''
-Represents a R-Tree node
+Represents a R-Tree node in disk (index-file object)
 '''
 class Node:
     def __init__(self, coordinates:list):

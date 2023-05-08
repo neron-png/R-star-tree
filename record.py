@@ -15,7 +15,7 @@ class Point:
         """.replace("\n", "")
 
 '''
-Represents a stored data record in disk
+Represents a stored data record in disk (data-file object)
 '''
 class Record:
     def __init__(self, point:Point):
