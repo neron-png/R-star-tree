@@ -1,4 +1,4 @@
-# from record import Record
+from record import Record
 from config import *
 
 
@@ -38,13 +38,26 @@ def initialize():
 
 def fetchNextBlock():
     with open(INPUTFILE, "rb") as file:
-        yield file.read(BLOCKSIZE).decode('utf-8')
+        filesize = file.seek(0, 2)
+        file.seek(0)
+        while file.tell() < filesize-BLOCKSIZE:
+            yield file.read(BLOCKSIZE).decode('utf-8')
+        else:
+            yield file.read(filesize - file.tell)
 
 
 records = 0
 latestBlock = 1
 blockEnd = 0
 
-# def storeRecord(record: Record):
+def storeRecord(record: Record):
 
+    with open(DATAFILE, "rb+") as cursor:
+
+        cursor.seek(0, 2)
+        print(cursor.tell())
+
+        end = cursor.tell()
+        if end//BLOCKSIZE:
+            pass
 
