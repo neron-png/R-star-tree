@@ -1,0 +1,4 @@
+
+
+def storeRecord(record: Record):
+    
