@@ -13,16 +13,21 @@ def initialize():
         
         fileOccupancy = cursor.tell()
 
+        # Check if the file is empty or badly initialised
         if fileOccupancy < BLOCKSIZE:
             
+            # prepare a block of data to write
             initBlock = [0 for _ in range(BLOCKSIZE)]
             initHeader = FILEHEADER.format(file)
 
+            # combine the two
             for i in range(len(initHeader)):
-                initBlock[i] = initHeader[i]
-
+                initBlock[i] = ord(initHeader[i].encode('utf-8'))
+            
+            # convert to byte array
             initBlock = bytearray(initBlock)
 
+            # write to file
             cursor.close()
             cursor = open(file, "wb+")
             cursor.seek(0)
