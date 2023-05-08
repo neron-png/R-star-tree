@@ -10,13 +10,14 @@ class Node:
         self.childSlotId = 0
     
     def __str__(self):
-        return f"""
-        <node>
-        <block-id>{ self.blockId }</block-id>
-        <slot-id>{ self.slotId }</slot-id>
-        <child-block-id>{ self.childBlockId }</child-block-id>
-        <child-slot-id>{ self.childSlotId }</child-slot-id>
-        <data>
-        {"".join(["<c" + i + ">" + coordinate + "</c" + i + ">" for i, coordinate in enumerate(self.coordinates)])}
-        </node>
-        """
+        return f"""\
+        <node>\
+        <block-id>{ self.blockId }</block-id>\
+        <slot-id>{ self.slotId }</slot-id>\
+        <child-block-id>{ self.childBlockId }</child-block-id>\
+        <child-slot-id>{ self.childSlotId }</child-slot-id>\
+        <data>\
+        {"".join([f'<c{i}>{coordinate}</c{i}>' for i, coordinate in enumerate(self.coordinates)])}
+        </data>\
+        </node>\
+        """.replace(" ", "")
