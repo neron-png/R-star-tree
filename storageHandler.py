@@ -1,5 +1,6 @@
 from record import Record
 from config import *
+import re
 
 
 def initialize():
@@ -38,12 +39,22 @@ def initialize():
 
 def fetchNextBlock():
     with open(INPUTFILE, "rb") as file:
+        remnants = ""
+        pattern = r"(<node.*/>)|(<node.*>(\n|\b|.)*<\/node>)"
+
         filesize = file.seek(0, 2)
         file.seek(0)
         while file.tell() < filesize-BLOCKSIZE:
-            yield file.read(BLOCKSIZE).decode('utf-8')
+            block = remnants + file.read(BLOCKSIZE).decode('utf-8')
+
+            nodes = ["".join(x) for x in re.findall(pattern, block)]
+            for node in nodes:
+                block.replace(node, '')
+            remnants = block
+
+            yield "".join(nodes)
         else:
-            yield file.read(filesize - file.tell()).decode('utf-8')
+            yield remnants + file.read(filesize - file.tell()).decode('utf-8')
 
 
 records = 0
