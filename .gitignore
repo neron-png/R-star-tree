@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+a.txt
+b.txt
+c
+storageHandler_old.py
+
 # C extensions
 *.so
 *.xml
