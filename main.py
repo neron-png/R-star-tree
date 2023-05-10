@@ -7,7 +7,7 @@ if __name__ == "__main__":
     records = []
     for block in sh.fetchNextBlock():
         blockRecords = Record.parseXMLtoRecordsList(block)
-        records.extend(Record.parseXMLtoRecordsList(block))
+        records.extend(blockRecords)
 
 
     print(records)
