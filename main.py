@@ -2,17 +2,15 @@ import storageHandler as sh
 from record import *
 import re
 
+if __name__ == "__main__":
 
-records = []
-with open("test.xml", "w+", encoding="utf-8") as f:
+    records = []
     for block in sh.fetchNextBlock():
-        print(block)
-        # print("nodes:",nodes)
-        # print("block:",block)
-        # records.append(Record.parseXMLtoRecordsList(block))
+        blockRecords = Record.parseXMLtoRecordsList(block)
+        records.extend(Record.parseXMLtoRecordsList(block))
 
-print(records)
 
-sh.initialize()
+    print(records)
+    sh.initialize()
 
-sh.storeRecord(None)
+    sh.storeRecord(None)

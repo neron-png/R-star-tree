@@ -1,7 +1,7 @@
 from record import Record
 from config import *
 import re
-
+from time import time
 
 def initialize():
 
@@ -37,24 +37,22 @@ def initialize():
         cursor.close()
             
 
-def fetchNextBlock():
+def fetchNextBlock(test = True):
     with open(INPUTFILE, "rb") as file:
         remnants = ""
-        pattern = r"(<node.*/>)|(<node.*>(\n|\b|.)*<\/node>)"
 
         filesize = file.seek(0, 2)
         file.seek(0)
         while file.tell() < filesize-BLOCKSIZE:
-            block = remnants + file.read(BLOCKSIZE).decode('utf-8')
+            inText = file.read(BLOCKSIZE).decode('utf-8')
+            block = remnants + inText
+            remnants = block[-2000:]
 
-            nodes = ["".join(x) for x in re.findall(pattern, block)]
-            for node in nodes:
-                block.replace(node, '')
-            remnants = block
-
-            yield "".join(nodes)
+            yield block
         else:
-            yield remnants + file.read(filesize - file.tell()).decode('utf-8')
+            inText = file.read(filesize - file.tell()).decode('utf-8')
+            block = remnants + inText
+            yield block
 
 
 records = 0

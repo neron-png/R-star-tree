@@ -1,3 +1,5 @@
+from io import StringIO
+
 '''
 Represents a n-D point
 '''
@@ -35,11 +37,19 @@ class Record:
     @staticmethod
     def parseXMLtoRecordsList(block:str) -> list:
         from lxml import etree
-        records = []  
-        names = etree.fromstring(block).xpath('//node/tag[@k=\'name:en\']')
-        ids = etree.fromstring(block).xpath('//node/tag[@k="name:en"]/../@id')
-        LATcoordinates = etree.fromstring(block).xpath('//node/tag[@k="name:en"]/../@lat')
-        LONcoordinates = etree.fromstring(block).xpath('//node/tag[@k="name:en"]/../@lon')
+        records = []
+        parser = etree.XMLParser(encoding='utf-8', recover = True)
+        block = "<a>" + block + "</a>" #Tricking it to believe it's validly formed XML
+        block = block.encode("utf-8")
+
+        parsedBlock = etree.fromstring(block, parser=parser)
+
+
+        names = parsedBlock.xpath('//node/tag[@k=\'name\']')
+        ids = parsedBlock.xpath('//node/tag[@k="name"]/../@id')
+        LATcoordinates = parsedBlock.xpath('//node/tag[@k="name"]/../@lat')
+        LONcoordinates = parsedBlock.xpath('//node/tag[@k="name"]/../@lon')
         for i in range(len(LATcoordinates)):
-            records.append(Record(Point(names[i],ids[i],[LATcoordinates[i],LONcoordinates[i]])))
+            rec = Record(Point(names[i],ids[i],[LATcoordinates[i],LONcoordinates[i]]))
+            records.append(rec)
         return records
