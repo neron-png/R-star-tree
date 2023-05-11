@@ -26,4 +26,31 @@ class Node:
         </node>
         """.replace("        ", "").replace("\n","")
 
+    def parseBlockToNodeList(block:str) -> list:
+        from lxml import etree
+        nodes = []
+        parser = etree.XMLParser(encoding='utf-8', recover=True)
+
+        parsedBlock = etree.fromstring(block, parser=parser)
+
+        block_ids = parsedBlock.xpath('//block-id')
+        slot_ids = parsedBlock.xpath('//slot-id')
+
+        child_block_ids = parsedBlock.xpath('//child-block-id')
+        child_slot_ids = parsedBlock.xpath('//child-slot-id')
+
+        coordinates = []
+        for i in range(NUM_OF_COORDINATES):
+            coordinates.append(parsedBlock.xpath("//c" + str(i)))
+
+        for i in range(len(block_ids)):
+            node = Node(coordinates[i])
+            node.blockId = block_ids[i]
+            node.slotId = slot_ids[i]
+            node.childBlockId = child_block_ids[i]
+            node.childSlotId = child_slot_ids[i]
+            nodes.append(node)
+
+        return nodes
+
 NODE_SIZE = sys.getsizeof(str(Node(["1.0" for _ in range(NUM_OF_COORDINATES)])))

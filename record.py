@@ -15,7 +15,7 @@ class Point:
         return f"""
         <id>{ "{str:0{width}s}".format(width=RECORD_ID_SIZE, str=str(int(self.pointId))[:POINT_ID_SIZE]) }</id>
         <name>{ "{str:_<{width}s}".format(width=POINT_NAME_SIZE, str=self.pointName[:POINT_NAME_SIZE]) }</name>
-        {"".join([f'<c{ "{str:0{width}s}".format(width=COORDINATES_INDEX_SIZE, str=str(i)[:COORDINATES_INDEX_SIZE]) }>{ "{str:0<{width}s}".format(width=COORDINATE_SIZE, str=str(float(coordinate))[:COORDINATE_SIZE]) }</c{ "{str:0{width}s}".format(width=COORDINATES_INDEX_SIZE, str=str(i)[:COORDINATES_INDEX_SIZE]) }>' for i, coordinate in enumerate(self.coordinates)])}
+        {"".join([f'<c{ "{str:0{width}s}".format(width=COORDINATES_INDEX_SIZE, str=str(i)[:COORDINATES_INDEX_SIZE]) }>{ "{str:0<{width}s}".format(width=COORDINATE_SIZE, str=str(coordinate)[:COORDINATE_SIZE]) }</c{ "{str:0{width}s}".format(width=COORDINATES_INDEX_SIZE, str=str(i)[:COORDINATES_INDEX_SIZE]) }>' for i, coordinate in enumerate(self.coordinates)])}
         """.replace("\n", "")
 
 '''
@@ -37,7 +37,7 @@ class Record:
         """.replace("        ", "").replace("\n","")
 
     @staticmethod
-    def parseXMLtoRecordsList(block:str) -> list:
+    def parseXMLToRecordsList(block:str) -> list:
         from lxml import etree
         records = []
         parser = etree.XMLParser(encoding='utf-8', recover=True)
@@ -51,15 +51,43 @@ class Record:
         LATcoordinates = parsedBlock.xpath('//node[tag[@k="name"]]/@lat')
         LONcoordinates = parsedBlock.xpath('//node[tag[@k="name"]]/@lon')
         for i in range(len(LATcoordinates)):
-            rec = Record(Point(names[i],ids[i],[LATcoordinates[i],LONcoordinates[i]]))
-            records.append(rec)
+            record = Record(Point(names[i],ids[i],[LATcoordinates[i],LONcoordinates[i]]))
+            records.append(record)
 
         ids = parsedBlock.xpath('//node/@id')
         LATcoordinates = parsedBlock.xpath('//node/@lat')
         LONcoordinates = parsedBlock.xpath('//node/@lon')
         for i in range(len(LONcoordinates)):
-            rec = Record(Point("unknown",ids[i],[LATcoordinates[i],LONcoordinates[i]]))
-            records.append(rec)
+            record = Record(Point("unknown",ids[i],[LATcoordinates[i],LONcoordinates[i]]))
+            records.append(record)
+
+        return records
+
+    @staticmethod
+    def parseBlockToRecordsList(block:str) -> list:
+        from lxml import etree
+        records = []
+        parser = etree.XMLParser(encoding='utf-8', recover=True)
+
+        print(block)
+
+        parsedBlock = etree.fromstring(block, parser=parser)
+
+        block_ids = parsedBlock.xpath('//block-id')
+        slot_ids = parsedBlock.xpath('//slot-id')
+
+        point_ids = parsedBlock.xpath('//id')
+        names = parsedBlock.xpath('//name')
+
+        coordinates = []
+        for i in range(NUM_OF_COORDINATES):
+            coordinates.append(parsedBlock.xpath("//c" + str(i)))
+
+        for i in range(len(block_ids)):
+            record = Record(Point(names[i], point_ids[i], coordinates[i]))
+            record.blockId = block_ids[i]
+            record.slotId = slot_ids[i]
+            records.append(record)
 
         return records
 

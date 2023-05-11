@@ -1,4 +1,5 @@
-from record import Record
+from record import *
+from node import *
 from config import *
 import re
 from time import time
@@ -112,3 +113,24 @@ def storeRecord(record: Record):
 
     storeRecordList([record])
 
+
+#HELLO PAL!
+def fetchBlock(file, blockId:int):
+    if file == DATAFILE:
+        offset = RECORD_SIZE
+    elif file == INDEXFILE:
+        offset = NODE_SIZE
+    else:
+        return None
+
+    with open(file, "rb") as file:
+        filesize = file.seek(0, 2)
+        file.seek(0)
+        file.seek(140 + offset * blockId)
+        block = file.read(BLOCKSIZE).decode('utf-8')
+
+    if file == DATAFILE:
+        Record.parseBlockToRecordsList(block)
+    else:
+        # Node.parseBlockToNodeList(block)
+        pass
