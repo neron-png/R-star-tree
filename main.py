@@ -1,5 +1,6 @@
 import storageHandler as sh
 from record import *
+from node import *
 import re
 
 if __name__ == "__main__":
@@ -20,4 +21,4 @@ if __name__ == "__main__":
         print(record)
     #     sh.storeRecord(record)
 
-    print(RECORD_SIZE)
+    print(RECORD_SIZE, NODE_SIZE)
