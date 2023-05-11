@@ -1,19 +1,20 @@
 from io import StringIO
+from config import *
 
 '''
 Represents a n-D point
 '''
 class Point:
     def __init__(self, name:str, id:str, coordinates:list):
-        self.locName = name[0:128]
-        self.locId = id[0:10]
+        self.locName = "{:<128}".format(name[:128])
+        self.locId = "{:<10}".format(id[:10])
         self.coordinates = coordinates
     
     def __str__(self):
         return f"""
         <id>{ self.locId }</id>
         <name>{ self.locName }</name>
-        {"".join([f'<c{i}>{coordinate}</c{i}>' for i, coordinate in enumerate(self.coordinates)])}
+        {"".join([f'<c{ "{number:0{width}d}".format(width=COORDINATES_INDEX_SIZE, number=i) }>{ coordinate }</c{ "{number:0{width}d}".format(width=COORDINATES_INDEX_SIZE, number=i) }>' for i, coordinate in enumerate(self.coordinates)])}    # Assumption for sizes max coordinates n
         """.replace("\n", "")
 
 '''
@@ -22,9 +23,9 @@ Represents a stored data record in disk (data-file object)
 class Record:
     def __init__(self, point:Point):
         self.data = point
-        self.blockId = 0
-        self.slotId = 0
-    
+        self.blockId = "{number:0{width}d}".format(width=BLOCK_INDEX_SIZE, number=0)
+        self.slotId = "{number:0{width}d}".format(width=RECORD_SLOT_INDEX_SIZE, number=0)
+
     def __str__(self):
         return f"""\
         <record>\
@@ -33,7 +34,13 @@ class Record:
         <data>{ str(self.data) }</data>\
         </record>\
         """.replace(" ", "")
-    
+
+    def setBlockId(self, id:int):
+        self.blockId = "{number:0{width}d}".format(width=BLOCK_INDEX_SIZE, number=id)
+
+    def setSlotId(self, id:int):
+        self.slotIdId = "{number:0{width}d}".format(width=RECORD_SLOT_INDEX_SIZE, number=id)
+
     @staticmethod
     def parseXMLtoRecordsList(block:str) -> list:
         from lxml import etree
