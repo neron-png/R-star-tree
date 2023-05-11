@@ -10,11 +10,12 @@ if __name__ == "__main__":
     for block in sh.fetchNextBlock():
         blockRecords = Record.parseXMLtoRecordsList(block)
         records.extend(blockRecords)
+        sh.storeRecordList(blockRecords)
 
 
     # print(records)
 
 
-    for record in records:
-        print(record)
-        sh.storeRecord(record)
+    # for record in records:
+    #     # print(record)
+    #     sh.storeRecord(record)
