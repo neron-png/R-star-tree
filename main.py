@@ -12,8 +12,9 @@ if __name__ == "__main__":
         records.extend(blockRecords)
 
 
-    print(records)
+    # print(records)
 
 
     for record in records:
+        print(record)
         sh.storeRecord(record)
