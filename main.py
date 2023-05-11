@@ -19,3 +19,5 @@ if __name__ == "__main__":
     for record in records:
         print(record)
     #     sh.storeRecord(record)
+
+    print(RECORD_SIZE)

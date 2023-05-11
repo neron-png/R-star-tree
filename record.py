@@ -1,3 +1,5 @@
+import sys
+
 from config import *
 
 '''
@@ -60,3 +62,5 @@ class Record:
             records.append(rec)
 
         return records
+
+RECORD_SIZE = sys.getsizeof(str(Record(Point("dummy","0",["1.0" for _ in range(NUM_OF_COORDINATES)]))))

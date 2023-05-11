@@ -1,3 +1,5 @@
+import sys
+
 from config import *
 
 '''
@@ -23,3 +25,5 @@ class Node:
         </data>
         </node>
         """.replace("        ", "").replace("\n","")
+
+NODE_SIZE = sys.getsizeof(str(Node(["1.0" for _ in range(NUM_OF_COORDINATES)])))
