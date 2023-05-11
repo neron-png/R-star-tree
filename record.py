@@ -1,20 +1,19 @@
-from io import StringIO
 from config import *
 
 '''
 Represents a n-D point
 '''
 class Point:
-    def __init__(self, name:str, id:str, coordinates:list):
-        self.locName = "{:<128}".format(name[:128])
-        self.locId = "{:<10}".format(id[:10])
+    def __init__(self, name:str, pointId:int, coordinates:list):
+        self.locName = "{str:{width}s}".format(width=128, str=name)
+        self.locId = "{number:0{width}d}".format(width=RECORD_INDEX_SIZE, number=int(pointId[:10]))
         self.coordinates = coordinates
     
     def __str__(self):
         return f"""
         <id>{ self.locId }</id>
         <name>{ self.locName }</name>
-        {"".join([f'<c{ "{number:0{width}d}".format(width=COORDINATES_INDEX_SIZE, number=i) }>{ coordinate }</c{ "{number:0{width}d}".format(width=COORDINATES_INDEX_SIZE, number=i) }>' for i, coordinate in enumerate(self.coordinates)])}    # Assumption for sizes max coordinates n
+        {"".join([f'<c{ "{number:0{width}d}".format(width=COORDINATES_INDEX_SIZE, number=i) }>{ "{str:0{width}s}".format(width=COORDINATE_SIZE, str=str(coordinate)) }</c{ "{number:0{width}d}".format(width=COORDINATES_INDEX_SIZE, number=i) }>' for i, coordinate in enumerate(self.coordinates)])}   
         """.replace("\n", "")
 
 '''
@@ -35,11 +34,11 @@ class Record:
         </record>\
         """.replace(" ", "")
 
-    def setBlockId(self, id:int):
-        self.blockId = "{number:0{width}d}".format(width=BLOCK_INDEX_SIZE, number=id)
+    def setBlockId(self, BlockId:int):
+        self.blockId = "{number:0{width}d}".format(width=BLOCK_INDEX_SIZE, number=BlockId)
 
-    def setSlotId(self, id:int):
-        self.slotIdId = "{number:0{width}d}".format(width=RECORD_SLOT_INDEX_SIZE, number=id)
+    def setSlotId(self, slotId:int):
+        self.slotIdId = "{number:0{width}d}".format(width=RECORD_SLOT_INDEX_SIZE, number=slotId)
 
     @staticmethod
     def parseXMLtoRecordsList(block:str) -> list:

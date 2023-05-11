@@ -16,6 +16,6 @@ if __name__ == "__main__":
     # print(records)
 
 
-    # for record in records:
-    #     # print(record)
+    for record in records:
+        print(record)
     #     sh.storeRecord(record)
