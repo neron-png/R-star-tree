@@ -59,14 +59,44 @@ records = 0
 latestBlock = 1
 blockEnd = 0
 
+#TODO: COMMENTS AND CLEANUP!!!
 def storeRecord(record: Record):
+    global blockEnd, records, latestBlock
 
     with open(DATAFILE, "rb+") as cursor:
 
         cursor.seek(0, 2)
-        print(cursor.tell())
 
         end = cursor.tell()
-        if end//BLOCKSIZE:
-            pass
+
+        newBlock = [0]*BLOCKSIZE
+
+        if end//BLOCKSIZE == 1:
+            cursor.write(bytearray(newBlock))
+
+
+        cursor.seek(latestBlock*BLOCKSIZE)
+        currentBlock = bytearray(cursor.read(BLOCKSIZE))
+
+        # Check if record fits in block
+        if not blockEnd + len(str(record)) >= BLOCKSIZE:
+            for i, byte in enumerate(bytearray(str(record).encode("utf-8"))):
+                currentBlock[blockEnd+i] = byte
+
+            blockEnd += len(bytearray(str(record).encode("utf-8")))
+
+        else:
+            latestBlock+=1
+            blockEnd = 0
+            currentBlock = newBlock
+            for i, byte in enumerate(bytearray(str(record).encode("utf-8"))):
+                currentBlock[blockEnd + i] = byte
+
+            blockEnd += len(bytearray(str(record).encode("utf-8")))
+
+        cursor.seek(latestBlock * BLOCKSIZE)
+        cursor.write(currentBlock)
+        records =+ 1
+
+        return latestBlock, blockEnd//len(bytearray(str(record).encode("utf-8")))
 
