@@ -115,7 +115,7 @@ def storeRecord(record: Record):
 
 
 #HELLO PAL!
-def fetchBlock(file, blockId:int):
+def fetchBlock(file, blockId: int) -> list:
     if file == DATAFILE:
         offset = RECORD_SIZE
     elif file == INDEXFILE:
@@ -124,15 +124,14 @@ def fetchBlock(file, blockId:int):
         return None
 
     with open(file, "rb") as file:
-        filesize = file.seek(0, 2)
         file.seek(0)
         file.seek(offset * blockId)
         block = file.read(BLOCKSIZE).decode('utf-8')
 
     if file == DATAFILE:
-        Record.parseBlockToRecordsList(block)
+        return Record.parseBlockToRecordsList(block)
     else:
-        # Node.parseBlockToNodeList(block)
+        # return Node.parseBlockToNodeList(block)
         pass
 
 
@@ -145,9 +144,9 @@ def storeBlock(block: list, blockid: int):
         # Getting to the end of the file
         cursor.seek(0, 2)
         end = cursor.tell()
-        cursor.seek(BLOCKSIZE*blockid
+        cursor.seek(BLOCKSIZE*blockid)
 
-        blockBytes = bytrarray([str(record).encode("utf-8) for record in block)
+        blockBytes = bytearray([str(record).encode('utf-8') for record in block])
         
         cursor.write(blockBytes)
         

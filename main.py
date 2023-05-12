@@ -23,4 +23,4 @@ if __name__ == "__main__":
 
    # print(RECORD_SIZE, NODE_SIZE)
 
-    print(sh.fetchBlock(DATAFILE,0))
+    print(sh.fetchBlock(DATAFILE,1))
