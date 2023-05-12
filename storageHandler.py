@@ -134,3 +134,21 @@ def fetchBlock(file, blockId:int):
     else:
         # Node.parseBlockToNodeList(block)
         pass
+
+
+#TODO: EVERYTHING
+def storeBlock(block: list, blockid: int):
+    global blockEnd, totalRecords, latestBlock
+    # Opening the file in read-bytes + (write) mode
+    with open(INDEXFILE, "rb+") as cursor:
+
+        # Getting to the end of the file
+        cursor.seek(0, 2)
+        end = cursor.tell()
+        cursor.seek(BLOCKSIZE*blockid
+
+        blockBytes = bytrarray([str(record).encode("utf-8) for record in block)
+        
+        cursor.write(blockBytes)
+        
+                      
