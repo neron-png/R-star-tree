@@ -144,10 +144,26 @@ def storeBlock(block: list, blockid: int):
         # Getting to the end of the file
         cursor.seek(0, 2)
         end = cursor.tell()
+        target = BLOCKSIZE*blockid
+
+        emptyness = end - target
+
+        if emptyness > 0:
+            fillerBlock = bytearray([0] * emptyness)
+            cursor.write(fillerBlock)
+
         cursor.seek(BLOCKSIZE*blockid)
 
-        blockBytes = bytearray([str(record).encode('utf-8') for record in block])
+        newBlock = bytearray([0] * BLOCKSIZE)
+
+        blockBytes = bytearray("".join([str(record) for record in block]).encode("utf-8"))
+
+        if len(blockBytes) > BLOCKSIZE:
+            raise f"Error: Trying to write a block list that's larger than BLOCKSIZE ({BLOCKSIZE})"
+
+        for i, newByte in enumerate(blockBytes):
+            newBlock[i] = newByte
         
-        cursor.write(blockBytes)
+        cursor.write(newBlock)
         
                       
