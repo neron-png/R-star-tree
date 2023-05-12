@@ -126,7 +126,7 @@ def fetchBlock(file, blockId:int):
     with open(file, "rb") as file:
         filesize = file.seek(0, 2)
         file.seek(0)
-        file.seek(140 + offset * blockId)
+        file.seek(offset * blockId)
         block = file.read(BLOCKSIZE).decode('utf-8')
 
     if file == DATAFILE:
