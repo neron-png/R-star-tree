@@ -69,7 +69,6 @@ class Record:
         records = []
         parser = etree.XMLParser(encoding='utf-8', recover=True)
 
-        print(block)
 
         parsedBlock = etree.fromstring(block, parser=parser)
 
@@ -84,9 +83,9 @@ class Record:
             coordinates.append(parsedBlock.xpath("//c" + str(i)))
 
         for i in range(len(block_ids)):
-            record = Record(Point(names[i], point_ids[i], coordinates[i]))
-            record.blockId = block_ids[i]
-            record.slotId = slot_ids[i]
+            record = Record(Point(names[i].text, point_ids[i].text, coordinates[i]))
+            record.blockId = block_ids[i].text
+            record.slotId = slot_ids[i].text
             records.append(record)
 
         return records
