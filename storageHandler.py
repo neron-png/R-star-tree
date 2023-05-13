@@ -1,3 +1,4 @@
+import record
 from record import *
 from node import *
 from config import *
@@ -72,6 +73,10 @@ def storeRecordList(recordsList: list):
     # Opening the file in read-bytes + (write) mode
     with open(DATAFILE, "rb+") as cursor:
 
+        #################
+        # SETTING IT UP #
+        #################
+
         # Getting to the end of the file
         cursor.seek(0, 2)
         end = cursor.tell()
@@ -87,11 +92,14 @@ def storeRecordList(recordsList: list):
         cursor.seek(latestBlock * BLOCKSIZE)
         currentBlock = bytearray(cursor.read(BLOCKSIZE))
 
-        for record in recordsList:
-            recordData = bytearray(str(record).encode("utf-8"))
-            recordSize = len(recordData)
+        #######################
+        # HANDING THE RECORDS #
+        #######################
 
-            if not blockEnd + recordSize < BLOCKSIZE:
+        for record in recordsList:
+
+            # CHECK IF WE NEED TO MAKE MORE SPACE IN THE FILE
+            if not blockEnd + RECORD_SIZE < BLOCKSIZE:
                 # Oop, we're in a new block, let's write the old one
                 cursor.seek(latestBlock * BLOCKSIZE)
                 cursor.write(currentBlock)
@@ -100,13 +108,24 @@ def storeRecordList(recordsList: list):
                 blockEnd = 0
                 latestBlock += 1
 
+            ################
+
+            # UPDATING THE RECORD'S INFORMATION
+            record.slotId = totalRecords - ((latestBlock-1)*(BLOCKSIZE//RECORD_SIZE))
+            record.blockId = latestBlock
+
+            # Converting said record into bytes
+            recordData = bytearray(str(record).encode("utf-8"))
             totalRecords += 1
-            # TODO: add the coords to the record and update recordData
+
+            # Appending the record's bytes into the block data
             for i, byte in enumerate(recordData):
                 currentBlock[blockEnd + i] = byte
-            blockEnd += recordSize
+            # print(blockEnd)
+            blockEnd += RECORD_SIZE
 
         else:
+            # Storing the block at the end of the loop
             cursor.seek(latestBlock * BLOCKSIZE)
             cursor.write(currentBlock)
 

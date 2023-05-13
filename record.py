@@ -12,9 +12,21 @@ class Point:
         self.coordinates = coordinates
 
     def __str__(self):
+
+        # Fix for name having differing size in Greek:
+        nameRealSize = len(self.pointName.encode('utf-8'))
+
+        # Trying to make it so it treats greek based on it's size in bytes
+        # In case it breaks, it replaces it with [REDACTED] as a catchall
+        try:
+            CorrName = f"{ self.pointName.encode('utf-8')[:POINT_NAME_SIZE].decode('utf-8') + '_'*(POINT_NAME_SIZE-nameRealSize) }"
+        except Exception as e:
+            CorrName = "{str:_<{width}s}".format(width=POINT_NAME_SIZE, str="[REDACTED]"[:POINT_NAME_SIZE])
+            # "{str:_<{width}s}".format(width=POINT_NAME_SIZE, str=self.pointName[:POINT_NAME_SIZE])
+
         return f"""
-        <id>{ "{str:0{width}s}".format(width=RECORD_ID_SIZE, str=str(int(self.pointId))[:POINT_ID_SIZE]) }</id>
-        <name>{ "{str:_<{width}s}".format(width=POINT_NAME_SIZE, str=self.pointName[:POINT_NAME_SIZE]) }</name>
+        <id>{ "{str:0{width}s}".format(width=POINT_ID_SIZE, str=str(int(self.pointId))[:POINT_ID_SIZE]) }</id>
+        <name>{ CorrName }</name>
         {"".join([f'<c{ "{str:0{width}s}".format(width=COORDINATES_INDEX_SIZE, str=str(i)[:COORDINATES_INDEX_SIZE]) }>{ "{str:0<{width}s}".format(width=COORDINATE_SIZE, str=str(coordinate)[:COORDINATE_SIZE]) }</c{ "{str:0{width}s}".format(width=COORDINATES_INDEX_SIZE, str=str(i)[:COORDINATES_INDEX_SIZE]) }>' for i, coordinate in enumerate(self.coordinates)])}
         """.replace("\n", "")
 
@@ -90,4 +102,4 @@ class Record:
 
         return records
 
-RECORD_SIZE = sys.getsizeof(str(Record(Point("dummy","0",["1.0" for _ in range(NUM_OF_COORDINATES)]))))
+RECORD_SIZE = len(bytearray(str(Record(Point("dummy","0",["1.0" for _ in range(NUM_OF_COORDINATES)]))).encode("utf-8")))
