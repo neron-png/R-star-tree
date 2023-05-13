@@ -4,6 +4,16 @@ from config import *
 import re
 from time import time
 
+totalRecords = 0
+latestBlock = 1
+blockEnd = 0
+
+def getBlockNumber(file):
+    if file == DATAFILE:
+        return latestBlock
+    else:
+        return None #TODO
+
 def initialize():
 
     files = (DATAFILE, INDEXFILE)
@@ -56,9 +66,6 @@ def fetchNextBlock(test = True):
             yield block
 
 
-totalRecords = 0
-latestBlock = 1
-blockEnd = 0
 
 def storeRecordList(recordsList: list):
     global blockEnd, totalRecords, latestBlock
@@ -115,24 +122,30 @@ def storeRecord(record: Record):
 
 
 #HELLO PAL!
-def fetchBlock(file, blockId: int) -> list:
-    if file == DATAFILE:
+def fetchBlock(filename, blockId: int) -> list:
+    if filename == DATAFILE:
         offset = RECORD_SIZE
-    elif file == INDEXFILE:
+    elif filename == INDEXFILE:
         offset = NODE_SIZE
     else:
         return None
 
-    with open(file, "rb") as file:
-        file.seek(0)
-        file.seek(offset * blockId)
-        block = file.read(BLOCKSIZE).decode('utf-8')
+    with open(filename, "rb+") as file:
 
-    if file == DATAFILE:
-        return Record.parseBlockToRecordsList(block)
-    else:
-        # return Node.parseBlockToNodeList(block)
-        pass
+        # Seek to the block start
+        file.seek(BLOCKSIZE * blockId)
+
+        # Read the block's bytes
+        blockBytes = file.read(BLOCKSIZE)
+
+        # Remove the trailing null characters and convert to string
+        block = blockBytes[:-1*blockBytes.count(0)].decode('utf-8')
+
+        if filename == DATAFILE:
+            return Record.parseBlockToRecordsList(block)
+        else:
+            # return Node.parseBlockToNodeList(block)
+            pass
 
 
 #TODO: EVERYTHING

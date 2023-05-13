@@ -16,6 +16,8 @@ if __name__ == "__main__":
 
     # print(records)
 
+    for i in range(1, sh.getBlockNumber(DATAFILE)):
+        print(sh.fetchBlock(DATAFILE, i))
 
     #for record in records:
    #     print(record)
