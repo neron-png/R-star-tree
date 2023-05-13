@@ -25,9 +25,9 @@ class Point:
             # "{str:_<{width}s}".format(width=POINT_NAME_SIZE, str=self.pointName[:POINT_NAME_SIZE])
 
         return f"""
-        <id>{ "{str:0{width}s}".format(width=POINT_ID_SIZE, str=str(int(self.pointId))[:POINT_ID_SIZE]) }</id>
+        <id>{ "{str:0>{width}s}".format(width=POINT_ID_SIZE, str=str(int(self.pointId))[:POINT_ID_SIZE]) }</id>
         <name>{ CorrName }</name>
-        {"".join([f'<c{ "{str:0{width}s}".format(width=COORDINATES_INDEX_SIZE, str=str(i)[:COORDINATES_INDEX_SIZE]) }>{ "{str:0<{width}s}".format(width=COORDINATE_SIZE, str=str(coordinate)[:COORDINATE_SIZE]) }</c{ "{str:0{width}s}".format(width=COORDINATES_INDEX_SIZE, str=str(i)[:COORDINATES_INDEX_SIZE]) }>' for i, coordinate in enumerate(self.coordinates)])}
+        {"".join([f'<c{ "{str:0>{width}s}".format(width=COORDINATES_INDEX_SIZE, str=str(i)[:COORDINATES_INDEX_SIZE]) }>{ "{str:0<{width}s}".format(width=COORDINATE_SIZE, str=str(coordinate)[:COORDINATE_SIZE]) }</c{ "{str:0>{width}s}".format(width=COORDINATES_INDEX_SIZE, str=str(i)[:COORDINATES_INDEX_SIZE]) }>' for i, coordinate in enumerate(self.coordinates)])}
         """.replace("\n", "")
 
 '''
@@ -42,8 +42,8 @@ class Record:
     def __str__(self):
         return f"""
         <record>
-        <block-id>{ "{str:0{width}s}".format(width=RECORD_BLOCK_ID_SIZE, str=str(int(self.blockId))[:RECORD_BLOCK_ID_SIZE]) }</block-id>
-        <slot-id>{ "{str:0{width}s}".format(width=RECORD_SLOT_INDEX_SIZE, str=str(int(self.slotId))[:RECORD_SLOT_INDEX_SIZE]) }</slot-id>
+        <block-id>{ "{str:0>{width}s}".format(width=RECORD_BLOCK_ID_SIZE, str=str(int(self.blockId))[:RECORD_BLOCK_ID_SIZE]) }</block-id>
+        <slot-id>{ "{str:0>{width}s}".format(width=RECORD_SLOT_INDEX_SIZE, str=str(int(self.slotId))[:RECORD_SLOT_INDEX_SIZE]) }</slot-id>
         <data>{ self.data }</data>
         </record>
         """.replace("        ", "").replace("\n","")

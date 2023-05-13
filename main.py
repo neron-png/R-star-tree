@@ -24,6 +24,7 @@ if __name__ == "__main__":
     for i in range(1, sh.getBlockNumber(DATAFILE)):
         for record in sh.fetchBlock(DATAFILE, i):
             pass
+            # record.slotId = 1
             # print("record.blockId: ", record.blockId)
             # print("record.slotId: ", record.slotId)
             # print(str(record))
@@ -35,3 +36,4 @@ if __name__ == "__main__":
    # print(RECORD_SIZE, NODE_SIZE)
 
     print(sh.fetchBlock(DATAFILE,1))
+
