@@ -140,14 +140,7 @@ def storeRecord(record: Record):
     storeRecordList([record])
 
 
-#HELLO PAL!
 def fetchBlock(filename, blockId: int) -> list:
-    if filename == DATAFILE:
-        offset = RECORD_SIZE
-    elif filename == INDEXFILE:
-        offset = NODE_SIZE
-    else:
-        return None
 
     with open(filename, "rb+") as file:
 

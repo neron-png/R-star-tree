@@ -35,5 +35,6 @@ if __name__ == "__main__":
 
    # print(RECORD_SIZE, NODE_SIZE)
 
-    print(sh.fetchBlock(DATAFILE,1))
+    for r in sh.fetchBlock(DATAFILE,2):
+        print(r)
 
