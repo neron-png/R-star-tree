@@ -2,7 +2,7 @@ import record
 import storageHandler as sh
 from record import *
 from node import *
-import re
+from RTree import RTree
 
 if __name__ == "__main__":
 
@@ -21,20 +21,13 @@ if __name__ == "__main__":
 
     # print(records)
 
-    for i in range(1, sh.getBlockNumber(DATAFILE)):
-        for record in sh.fetchBlock(DATAFILE, i):
-            pass
-            # record.slotId = 1
-            # print("record.blockId: ", record.blockId)
-            # print("record.slotId: ", record.slotId)
-            # print(str(record))
+    # for i in range(1, sh.getBlockNumber(DATAFILE)+1):
+    # for i in range(1, 54):
+    #     recordFile = sh.fetchBlock(DATAFILE, i)
+    #     for record in sh.fetchBlock(DATAFILE, i):
+    #         print(str(record))
 
-    #for record in records:
-   #     print(record)
-    #     sh.storeRecord(record)
 
-   # print(RECORD_SIZE, NODE_SIZE)
+    rtree = RTree()
 
-    for r in sh.fetchBlock(DATAFILE,2):
-        print(r)
 

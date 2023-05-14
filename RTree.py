@@ -1,7 +1,13 @@
+from Block import Block
 
 class RTree():
 
     def __init__(self):
-        pass
+        self.root = Block(block_id=0)
+        self.currentBlock = self.root #This is a pointer!
+        print(self.currentBlock)
+        print(self.currentBlock.toBytes())
 
-    pass
+
+    def insert(self):
+        pass
