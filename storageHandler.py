@@ -151,7 +151,9 @@ def fetchBlock(filename, blockId: int) -> list:
         blockBytes = file.read(BLOCKSIZE)
 
         # Remove the trailing null characters and convert to string
-        block = blockBytes[:-1*blockBytes.count(0)].decode('utf-8')
+        # block = blockBytes[:-1*blockBytes.count(0)].decode('utf-8')
+        block = blockBytes.decode('utf-8')
+
 
         if filename == DATAFILE:
             return Record.parseBlockToRecordsList(block)
