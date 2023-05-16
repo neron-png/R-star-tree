@@ -1,6 +1,5 @@
 import Record
 from Record import *
-from node import *
 from RTreeNode import *
 from config import *
 import re

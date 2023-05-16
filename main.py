@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
     sh.storeRecord(Record(Point("dummy","0",["1.0" for _ in range(NUM_OF_COORDINATES)])))
 
-    print(RECORD_SIZE)
+    # print(RECORD_SIZE)
 
     records = []
     for block in sh.fetchNextBlock():

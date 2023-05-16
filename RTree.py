@@ -1,8 +1,6 @@
 import numpy as np
 from RTreeNode import *
 from Record import *
-from node import *
-
 
 
 

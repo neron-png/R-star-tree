@@ -67,6 +67,24 @@ class RTreeEntry():
     def toBytes(self):
         return bytearray("".join([item for item in str(self)]).encode("utf-8"))
 
+    def parseBlockToEntryList(block: str) -> list:
+        from lxml import etree
+        entries = []
+        parser = etree.XMLParser(encoding='utf-8', recover=True)
+
+        parsedBlock = etree.fromstring(block, parser=parser)
+
+        rects = parsedBlock.xpath('//rect')
+        block_ids = parsedBlock.xpath('//block-id')
+        slot_ids = parsedBlock.xpath('//slot-id')
+        child_ids = parsedBlock.xpath('//child-id')
+
+        for i in range(len(rects)):
+            entry = RTreeEntry(Rectangle([rects[i].text]),int(child_ids[i].text),(block_ids[i].text,slot_ids[i].text))
+            entries.append(entry)
+
+        return entries
+
 
 ENTRY_SIZE = sys.getsizeof(str(RTreeEntry(Rectangle([[1.0 for _ in range(NUM_OF_COORDINATES)]]),None,None)),'utf-8')
 
