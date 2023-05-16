@@ -97,7 +97,7 @@ class Record:
             coordinates.append(parsedBlock.xpath("//c" + str(i)))
 
         for i in range(len(block_ids)):
-            record = Record(Point(names[i].text, point_ids[i].text, [coordinates[j][i].text for j in range(len(coordinates))]))
+            record = Record(Point(names[i].text, point_ids[i].text, [float(coordinates[j][i].text) for j in range(len(coordinates))]))
             record.blockId = block_ids[i].text
             record.slotId = slot_ids[i].text
             records.append(record)

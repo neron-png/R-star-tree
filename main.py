@@ -1,7 +1,7 @@
 import Record
 import storageHandler as sh
 from Record import *
-from node import *
+from RTreeNode import *
 from RTree import RTree
 
 if __name__ == "__main__":
@@ -18,6 +18,11 @@ if __name__ == "__main__":
         records.extend(blockRecords)
         sh.storeRecordList(blockRecords)
 
+    block = sh.fetchBlock(DATAFILE,1);
+    for r in block:
+        print(RTreeEntry(None,None,r))
+
+    #print(ENTRY_SIZE)
 
     # print(records)
 
@@ -28,6 +33,6 @@ if __name__ == "__main__":
     #         print(str(record))
 
 
-    rtree = RTree()
+    # rtree = RTree()
 
 

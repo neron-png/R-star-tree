@@ -1,3 +1,5 @@
+import sys
+
 from Record import *
 import numpy as np
 from config import *
@@ -11,14 +13,23 @@ class Rectangle:
     """
 
     def __init__(self, points: list):
-        self.min_coords = min_coords = np.min(points, axis=0)
-        self.max_coords = max_coords = np.max(points, axis=0)
+        self.min_coords = np.min(points, axis=0)
+        self.max_coords = np.max(points, axis=0)
 
     def is_point_under_rectangle(self, point: Point) -> bool:
         for i, c in enumerate(point.coordinates):
             if not (c >= self.min_coords[i] and c <= self.max_coords[i]):
                 return False
         return True
+
+    def __str__(self):
+        minC, maxC = [], []
+        for c in list(self.min_coords):
+            minC.append("{str:0<{width}s}".format(width=COORDINATE_SIZE, str=str(c)))
+        for c in list(self.max_coords):
+            maxC.append("{str:0<{width}s}".format(width=COORDINATE_SIZE, str=str(c)))
+
+        return f"""{minC},{maxC}""".replace("\'","")
 
 
 class RTreeEntry():
@@ -27,15 +38,37 @@ class RTreeEntry():
     """
 
     def __init__(self, rect: Rectangle = None, child_id: int = None, data: Record = None):
+        self.rect = rect if rect else Rectangle([data.data.coordinates])
         self.data = (data.blockId, data.slotId) if data else None
-        self.rect = rect if rect else Rectangle(data.data.coordinates)
-        self.child_id = child_id    # length = NODE_BLOCK_ID_SIZE
+        self.child_id = child_id
 
     @property
     def is_leaf(self):
         return self.child is None
 
-    # TODO: to_string()
+    def __str__(self):
+        return f"""
+                <entry>
+                <rect> 
+                    { self.rect } 
+                </rect>
+                <data>
+                <block-id> 
+                    {"{str:0>{width}s}".format(width=NODE_BLOCK_ID_SIZE, str=str(self.data[0] if self.data is not None else "")[:NODE_BLOCK_ID_SIZE])}
+                </block-id>
+                <slot-id>
+                    {"{str:0>{width}s}".format(width=NODE_SLOT_INDEX_SIZE, str=str(self.data[1] if self.data is not None else "")[:NODE_BLOCK_ID_SIZE])}
+                </slot-id>
+                </data>
+                <child-id>{"{str:0>{width}s}".format(width=NODE_BLOCK_ID_SIZE, str=str(self.child_id if self.child_id is not None else "")[:NODE_SLOT_INDEX_SIZE])}</child-id>
+                </entry>
+                """.replace(" ", "").replace("\n", "")
+
+    def toBytes(self):
+        return bytearray("".join([item for item in str(self)]).encode("utf-8"))
+
+
+ENTRY_SIZE = sys.getsizeof(str(RTreeEntry(Rectangle([[1.0 for _ in range(NUM_OF_COORDINATES)]]),None,None)),'utf-8')
 
 
 class RTreeNode(list):
