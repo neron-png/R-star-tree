@@ -6,7 +6,7 @@ from config import *
 Represents a n-D point
 '''
 class Point:
-    def __init__(self, name:str, pointId:str, coordinates:list):
+    def __init__(self, name: str, pointId: str, coordinates: list):
         self.pointName = name[:POINT_NAME_SIZE]
         self.pointId = int(pointId[:POINT_ID_SIZE])
         self.coordinates = coordinates
@@ -34,7 +34,7 @@ class Point:
 Represents a stored data record in disk (data-file object)
 '''
 class Record:
-    def __init__(self, point:Point):
+    def __init__(self, point: Point):
         self.data = point
         self.blockId = 0
         self.slotId = 0
@@ -49,11 +49,11 @@ class Record:
         """.replace("        ", "").replace("\n","")
 
     @staticmethod
-    def parseXMLToRecordsList(block:str) -> list:
+    def parseXMLToRecordsList(block: str) -> list:
         from lxml import etree
         records = []
         parser = etree.XMLParser(encoding='utf-8', recover=True)
-        block = "<a>" + block + "</a>" #Tricking it to believe it's validly formed XML
+        block = "<block>" + block + "</block>" #Tricking it to believe it's validly formed XML
         block = block.encode("utf-8")
 
         parsedBlock = etree.fromstring(block, parser=parser)
@@ -76,7 +76,7 @@ class Record:
         return records
 
     @staticmethod
-    def parseBlockToRecordsList(block:str) -> list:
+    def parseBlockToRecordsList(block: str) -> list:
         from lxml import etree
         records = []
         parser = etree.XMLParser(encoding='utf-8', recover=True)

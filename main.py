@@ -1,6 +1,6 @@
-import record
+import Record
 import storageHandler as sh
-from record import *
+from Record import *
 from node import *
 from RTree import RTree
 

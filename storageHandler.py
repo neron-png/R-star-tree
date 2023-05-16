@@ -1,6 +1,7 @@
-import record
-from record import *
+import Record
+from Record import *
 from node import *
+from RTreeNode import *
 from config import *
 import re
 from time import time
@@ -163,7 +164,7 @@ def fetchBlock(filename, blockId: int) -> list:
 
 
 #TODO: EVERYTHING
-def storeBlock(block: list, blockid: int):
+def storeBlock(node: RTreeNode):
     global blockEnd, totalRecords, latestBlock
     # Opening the file in read-bytes + (write) mode
     with open(INDEXFILE, "rb+") as cursor:
@@ -171,7 +172,7 @@ def storeBlock(block: list, blockid: int):
         # Getting to the end of the file
         cursor.seek(0, 2)
         end = cursor.tell()
-        target = BLOCKSIZE*blockid
+        target = BLOCKSIZE * node.block_id
 
         emptyness = end - target
 
@@ -179,11 +180,11 @@ def storeBlock(block: list, blockid: int):
             fillerBlock = bytearray([0] * emptyness)
             cursor.write(fillerBlock)
 
-        cursor.seek(BLOCKSIZE*blockid)
+        cursor.seek(BLOCKSIZE*node.block_id)
 
         newBlock = bytearray([0] * BLOCKSIZE)
 
-        blockBytes = bytearray("".join([str(record) for record in block]).encode("utf-8"))
+        blockBytes = bytearray("".join([str(item) for item in node]).encode("utf-8"))
 
         if len(blockBytes) > BLOCKSIZE:
             raise f"Error: Trying to write a block list that's larger than BLOCKSIZE ({BLOCKSIZE})"
