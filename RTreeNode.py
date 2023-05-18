@@ -16,7 +16,7 @@ class Rectangle:
         self.min_coords = np.min(points, axis=0)
         self.max_coords = np.max(points, axis=0)
 
-    def is_point_under_rectangle(self, point: Point) -> bool:
+    def contains_point(self, point: Point) -> bool:
         for i, c in enumerate(point.coordinates):
             if not (c >= self.min_coords[i] and c <= self.max_coords[i]):
                 return False
@@ -43,7 +43,7 @@ class RTreeEntry():
         self.child_id = child_id
 
     @property
-    def is_leaf(self):
+    def is_leaf_entry(self) -> bool:
         return self.child is None
 
     def __str__(self):
@@ -54,40 +54,21 @@ class RTreeEntry():
                 </rect>
                 <data>
                 <block-id> 
-                    {"{str:0>{width}s}".format(width=NODE_BLOCK_ID_SIZE, str=str(self.data[0] if self.data is not None else "")[:NODE_BLOCK_ID_SIZE])}
+                    {"{str:0>{width}s}".format(width=NODE_ID_SIZE, str=str(self.data[0] if self.data is not None else "")[:NODE_ID_SIZE])}
                 </block-id>
                 <slot-id>
-                    {"{str:0>{width}s}".format(width=NODE_SLOT_INDEX_SIZE, str=str(self.data[1] if self.data is not None else "")[:NODE_BLOCK_ID_SIZE])}
+                    {"{str:0>{width}s}".format(width=NODE_SLOT_INDEX_SIZE, str=str(self.data[1] if self.data is not None else "")[:NODE_ID_SIZE])}
                 </slot-id>
                 </data>
-                <child-id>{"{str:0>{width}s}".format(width=NODE_BLOCK_ID_SIZE, str=str(self.child_id if self.child_id is not None else "")[:NODE_SLOT_INDEX_SIZE])}</child-id>
+                <child-id>{"{str:0>{width}s}".format(width=NODE_ID_SIZE, str=str(self.child_id if self.child_id is not None else "")[:NODE_SLOT_INDEX_SIZE])}</child-id>
                 </entry>
                 """.replace(" ", "").replace("\n", "")
 
     def toBytes(self):
         return bytearray("".join([item for item in str(self)]).encode("utf-8"))
 
-    def parseBlockToEntryList(block: str) -> list:
-        from lxml import etree
-        entries = []
-        parser = etree.XMLParser(encoding='utf-8', recover=True)
-
-        parsedBlock = etree.fromstring(block, parser=parser)
-
-        rects = parsedBlock.xpath('//rect')
-        block_ids = parsedBlock.xpath('//block-id')
-        slot_ids = parsedBlock.xpath('//slot-id')
-        child_ids = parsedBlock.xpath('//child-id')
-
-        for i in range(len(rects)):
-            entry = RTreeEntry(Rectangle([rects[i].text]),int(child_ids[i].text),(block_ids[i].text,slot_ids[i].text))
-            entries.append(entry)
-
-        return entries
-
 
 ENTRY_SIZE = sys.getsizeof(str(RTreeEntry(Rectangle([[1.0 for _ in range(NUM_OF_COORDINATES)]]),None,None)),'utf-8')
-
 
 class RTreeNode(list):
     def __init__(self, capacity = BLOCKSIZE, block_id: int = 0, parent_id: int = None):
@@ -114,6 +95,31 @@ class RTreeNode(list):
     @parent_id.setter
     def parent_id(self, value):
         self._parent_id = value
+
+    @property
+    def is_leaf_node(self) -> bool:
+        for item in self:
+            if item is RTreeEntry and item.is_leaf_entry:
+                return True
+        return False
+
+    def parseBlockToEntryList(block: str) -> list:
+        from lxml import etree
+        entries = []
+        parser = etree.XMLParser(encoding='utf-8', recover=True)
+
+        parsedBlock = etree.fromstring(block, parser=parser)
+
+        rects = parsedBlock.xpath('//rect')
+        block_ids = parsedBlock.xpath('//block-id')
+        slot_ids = parsedBlock.xpath('//slot-id')
+        child_ids = parsedBlock.xpath('//child-id')
+
+        for i in range(len(rects)):
+            entry = RTreeEntry(Rectangle([rects[i].text]),int(child_ids[i].text),(block_ids[i].text,slot_ids[i].text))
+            entries.append(entry)
+
+        return entries
 
     def toBytes(self):
         return bytearray("".join([str(item) for item in self]).encode("utf-8"))

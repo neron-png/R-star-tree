@@ -136,11 +136,10 @@ def storeRecordList(recordsList: list):
 
 #TODO: COMMENTS AND CLEANUP!!!
 def storeRecord(record: Record):
-
     storeRecordList([record])
 
-
 def fetchBlock(filename, blockId: int) -> list:
+    """ Fetch from disk file a block of {BLOCK-SIZE} bytes"""
 
     with open(filename, "rb+") as file:
 
@@ -154,15 +153,13 @@ def fetchBlock(filename, blockId: int) -> list:
         # block = blockBytes[:-1*blockBytes.count(0)].decode('utf-8')
         block = blockBytes.decode('utf-8')
 
-
+        # Return the list of fetched elements (data or node block)
         if filename == DATAFILE:
             return Record.parseBlockToRecordsList(block)
         else:
-            # return Node.parseBlockToNodeList(block)
-            pass
+            return RTreeNode.parseBlockToNodeList(block)
 
 
-#TODO: EVERYTHING
 def storeBlock(node: RTreeNode):
     global blockEnd, totalRecords, latestBlock
     # Opening the file in read-bytes + (write) mode

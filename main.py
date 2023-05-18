@@ -2,7 +2,7 @@ import Record
 import storageHandler as sh
 from Record import *
 from RTreeNode import *
-from RTree import RTree
+from RStarTree import RStarTree
 
 if __name__ == "__main__":
 
@@ -33,6 +33,6 @@ if __name__ == "__main__":
     #         print(str(record))
 
 
-    # rtree = RTree()
+    # rtree = RStarTree()
 
 
