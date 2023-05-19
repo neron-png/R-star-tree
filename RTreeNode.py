@@ -1,5 +1,5 @@
 import sys
-
+import storageHandler as sh
 from Record import *
 import numpy as np
 from config import *
@@ -31,6 +31,36 @@ class Rectangle:
 
         return f"""{minC},{maxC}""".replace("\'","")
 
+    def calculateSize(self):
+        size = 1
+        for i, _ in enumerate(self.max_coords):
+            size *= self.max_coords[i] - self.min_coords[i]
+
+        return size
+
+    def calculateExpansion(self, point: Point):
+        temp_min_coords = self.min_coords
+        temp_max_coords = self.max_coords
+
+        if self.contains_point(point):
+            return 0
+        else:
+            newSize = 1
+            for i, coordinate in enumerate(point.coordinates):
+                if coordinate < temp_min_coords[i]:
+                    temp_min_coords[i] = coordinate
+                elif coordinate > temp_max_coords[i]:
+                    temp_max_coords[i] = coordinate
+                newSize *= temp_max_coords[i]-temp_min_coords[i]
+
+        return newSize - self.calculateSize()
+
+    def includePoint(self, point: Point):
+        if self.contains_point(point):
+            return
+        else:
+            self.min_coords = np.min([point.coordinates, self.min_coords])
+            self.max_coords = np.max([point.coordinates, self.max_coords])
 
 class RTreeEntry():
     """
@@ -44,7 +74,7 @@ class RTreeEntry():
 
     @property
     def is_leaf_entry(self) -> bool:
-        return self.child is None
+        return self.child_id is None
 
     def __str__(self):
         return f"""
@@ -64,11 +94,18 @@ class RTreeEntry():
                 </entry>
                 """.replace(" ", "").replace("\n", "")
 
+    def calculateExpansion(self, record: Record):
+        return self.rect.calculateExpansion(record.data)
+
+    def recalculateRectangle(self, record:Record):
+        self.rect.includePoint(record.data)
+
     def toBytes(self):
         return bytearray("".join([item for item in str(self)]).encode("utf-8"))
 
 
-ENTRY_SIZE = sys.getsizeof(str(RTreeEntry(Rectangle([[1.0 for _ in range(NUM_OF_COORDINATES)]]),None,None)),'utf-8')
+# ENTRY_SIZE = sys.getsizeof(str(RTreeEntry(Rectangle([[1.0 for _ in range(NUM_OF_COORDINATES)]]),None,None)).encode('utf-8'))
+ENTRY_SIZE = len(bytearray((str(RTreeEntry(Rectangle([[1.0 for _ in range(NUM_OF_COORDINATES)]]),None,None)).encode('utf-8'))))
 
 class RTreeNode(list):
     def __init__(self, capacity = BLOCKSIZE, block_id: int = 0, parent_id: int = None):
@@ -76,6 +113,12 @@ class RTreeNode(list):
         self.capacity = capacity
         self._block_id = block_id
         self._parent_id = parent_id
+
+    def fromFileID(self, blockID: int, parentID: int = None):
+        self.__init__(block_id=blockID, parent_id=parentID)
+        self.append(sh.fetchBlock(INDEXFILE, blockID))
+
+
 
     @property
     def block_id(self):
@@ -123,3 +166,6 @@ class RTreeNode(list):
 
     def toBytes(self):
         return bytearray("".join([str(item) for item in self]).encode("utf-8"))
+
+    def isOversized(self):
+        return self.capacity >= ENTRY_SIZE*len(self)

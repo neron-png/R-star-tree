@@ -12,9 +12,51 @@ class RStarTree():
         print(self.currentBlock)
         print(self.currentBlock.toBytes())
 
-    def insert(self):
+    # Recursively insert
+    def insert(self, record: Record, currentNode = None):
+
+        if not currentNode:
+            currentNode = self.root
+
+        # Check if we can import it where we are
+        if currentNode.is_leaf_node:
+            currentNode.append( RTreeEntry(data=record) )
+
+            if currentNode.isOversized():
+                self.split_leaf(currentNode)
+
+
+        # Otherwise we insert into the node with the smallest expansion (recursively ™️)
+        else:
+
+            minSize = None
+            minChildID = None
+            minEntry = None
+
+            for i, entry in enumerate(currentNode):
+                entryExpansion = entry.calculateExpansion(record)
+                if minSize == None or entryExpansion < minSize:
+                    minChildID = entry.child_id
+                    minEntry = i
+
+            newNode = RTreeNode()
+            # TODO: If memory is needed, we can pass the IDs and kill the currentNode perhaps
+            self.insert(record, newNode.fromFileID(blockID = minChildID, parentID=currentNode.block_id))
+
+            # TODO: and bring it back here
+            currentNode[minEntry].recalculateRectangle(record)
+
+            # Since the nodes below may split themselves, check after the recursion
+            if currentNode.isOversized():
+                self.split(currentNode)
+
+    #TODO
+    def _split_leaf(self, node: RTreeNode):
         pass
 
+    #TODO
+    def _split_node(self, node: RTreeNode):
+        pass
 
     def search_record(self, p: Point) -> Record:
         """ Find a point indexed by the RTree """

@@ -18,21 +18,10 @@ if __name__ == "__main__":
         records.extend(blockRecords)
         sh.storeRecordList(blockRecords)
 
-    block = sh.fetchBlock(DATAFILE,1);
+
+    block = sh.fetchBlock(DATAFILE,1)
     for r in block:
-        print(RTreeEntry(None,None,r))
+        print(RTreeEntry(data = r))
 
-    #print(ENTRY_SIZE)
-
-    # print(records)
-
-    # for i in range(1, sh.getBlockNumber(DATAFILE)+1):
-    # for i in range(1, 54):
-    #     recordFile = sh.fetchBlock(DATAFILE, i)
-    #     for record in sh.fetchBlock(DATAFILE, i):
-    #         print(str(record))
-
-
-    # rtree = RStarTree()
 
 
