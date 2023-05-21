@@ -149,7 +149,17 @@ class RTreeNode(list):
         self.__init__(block_id=blockID, parent_id=parentID)
         self.append(sh.fetchBlock(INDEXFILE, blockID))
 
+    def M(self) -> int:
+        # ? Maximum entries that fit (or are allowed) into the Node
+        return int((self.capacity//ENTRY_SIZE)*MAX_FILL_CAPACITY_PERCENTAGE)
 
+    def m(self) -> int:
+        # ? Lowest bound of entries allowed into the node
+        return int(self.M()*MIN_FILL_CAPACITY_PERCENTAGE)
+
+    def p(self) -> int:
+        # ? Items from the node to reinsert
+        return int((self.capacity//ENTRY_SIZE)*REINSERT_PERCENTAGE)
 
     @property
     def block_id(self):

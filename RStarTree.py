@@ -13,21 +13,30 @@ class RStarTree():
         print(self.currentBlock.toBytes())
 
 
-    def insert(self, record: Record, currentNode = None):
+    def insert(self, record: Record, currentNode: RTreeNode = None):
+        # * creating a leaf entry from the record
+        leafEntry = RTreeEntry(data=record)
 
         # * Running the "choose subtree" algorithm until a leaf node is selected
+        currentNode = self.root
+        insertionNode = None
+
         while True:
-            N = self._choose_subtree(record=record, currentNode=currentNode)
-            if N.is_leaf_node:
+            insertionNode = self._choose_subtree(record=record, currentNode=currentNode)
+            if insertionNode.is_leaf_node:
                 break
+
+        # * Inserting into the chosen leaf node
+        insertionNode.append(leafEntry)
+
+        # * checking if oversized and splitting
+        if insertionNode.isOversized():
+            self._split_leaf(insertionNode)
 
     def _choose_subtree(self, record: Record, currentNode = None):
 
-        # * Check if root
-        if not currentNode:
-            currentNode = self.root
-
         # * Check if we can import it where we are (on the leaf)
+        # Redundant code rn
         if currentNode.is_leaf_node:
             return currentNode
 
@@ -79,7 +88,7 @@ class RStarTree():
             else:
                 # ! [Minimum area cost]
                 # ! Classical pick, the one with the least area enlargement (not overlap)
-                N = sortedChildren[0]["entry"]
+                N = RTreeNode().fromFileID(blockID=sortedChildren[0]["entry"].child_id)
                 return N
 
     #TODO
