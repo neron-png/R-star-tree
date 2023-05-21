@@ -16,6 +16,12 @@ class Rectangle:
         self.min_coords = np.min(points, axis=0)
         self.max_coords = np.max(points, axis=0)
 
+    def get_min_coords(self):
+        return self.min_coords
+
+    def get_max_coords(self):
+        return self.max_coords
+
     def contains_point(self, point: Point) -> bool:
         for i, c in enumerate(point.coordinates):
             if not (c >= self.min_coords[i] and c <= self.max_coords[i]):

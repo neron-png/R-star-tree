@@ -15,19 +15,49 @@ class RStarTree():
     # Recursively insert
     def insert(self, record: Record, currentNode = None):
 
+        # * Running the "choose subtree" algorithm until a leaf node is selected
+        while True:
+            N = self._choose_subtree(record=record, currentNode=currentNode)
+            if N.is_leaf_node:
+                break
+
+    def _choose_subtree(self, record: Record, currentNode = None):
+
+        # * Check if root
         if not currentNode:
             currentNode = self.root
 
-        # Check if we can import it where we are
+        # * Check if we can import it where we are (on the leaf)
         if currentNode.is_leaf_node:
-            currentNode.append( RTreeEntry(data=record) )
+            return currentNode
 
-            if currentNode.isOversized():
-                self.split_leaf(currentNode)
-
-
-        # Otherwise we insert into the node with the smallest expansion (recursively ™️)
+        # ? If the childpoiters m N point to leaves [determine
+        # ? the minimum overlap cost],
+        # ? choose the entry m N whose rectangle needs least
+        # ? overlap enlargement to include the new data
+        # ? rectangle Resolve ties by choosing the entry
+        # ? whose rectangle needs the least area enlargement,
         else:
+
+            # * Check if the block points to leaf nodes
+            if currentNode[0].is_leaf_node:
+                pass
+                # TODO
+                # ! [Minimum overlap cost]
+                # ! Find entry in the current node which requires the least OVERLAP enlargement
+                # ! in order to house the new record
+                # ! Ties shall be resolved by classically (least area enlargement or least size in general)
+                N = None
+                return N
+
+            # * If the pointers do not point to leaf nodes
+            else:
+                pass
+                # TODO
+                # ! [Minimum area cost]
+                # ! Classical pick, the one with the least area enlargement (not overlap)
+                N = None
+                return N
 
             minSize = None
             minChildID = None
@@ -48,11 +78,13 @@ class RStarTree():
 
             # Since the nodes below may split themselves, check after the recursion
             if currentNode.isOversized():
-                self.split(currentNode)
+                self._split_node(currentNode)
 
     #TODO
     def _split_leaf(self, node: RTreeNode):
-        pass
+        sorted_entries = sorted(node, key=lambda entry: entry.rect.get_min_coords())
+
+
 
     #TODO
     def _split_node(self, node: RTreeNode):
