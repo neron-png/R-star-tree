@@ -12,7 +12,7 @@ class RStarTree():
         print(self.currentBlock)
         print(self.currentBlock.toBytes())
 
-    # Recursively insert
+
     def insert(self, record: Record, currentNode = None):
 
         # * Running the "choose subtree" algorithm until a leaf node is selected
@@ -31,59 +31,67 @@ class RStarTree():
         if currentNode.is_leaf_node:
             return currentNode
 
-        # ? If the childpoiters m N point to leaves [determine
-        # ? the minimum overlap cost],
-        # ? choose the entry m N whose rectangle needs least
-        # ? overlap enlargement to include the new data
-        # ? rectangle Resolve ties by choosing the entry
-        # ? whose rectangle needs the least area enlargement,
+        # * Find a node to import it into
         else:
+            sortedChildren = sorted([
+                {
+                    "expansion" : entry.calculateExpansion(record),
+                    "entry": entry
+                } for entry in currentNode
+            ], key=lambda child: child["expansion"])
 
             # * Check if the block points to leaf nodes
+            # * Almost linear split, non quadratic
             if currentNode[0].is_leaf_node:
-                pass
-                # TODO
                 # ! [Minimum overlap cost]
                 # ! Find entry in the current node which requires the least OVERLAP enlargement
                 # ! in order to house the new record
                 # ! Ties shall be resolved by classically (least area enlargement or least size in general)
-                N = None
+
+                # ? [determine the nearly minimum overlap cost]
+                # ? Sort in ascending order of necessary area enlargement
+                # ? Find the minimum overlap cost within the first n rectangles (eg. 10?)
+
+                sample = sortedChildren[:NODE_SAMPLE]
+
+                minOverlap = None
+                minOverlappingEntry = None
+
+                for i, entry in enumerate(sample):
+                    curr = entry["entry"]
+                    overlap = 0
+
+                    for j in range(i, len(sample)):
+                        if i == j:
+                            continue
+                        other = sample[j][entry].rect
+                        overlap += curr.rect.intersectSize(other)
+
+                    if minOverlap == None or overlap < minOverlap:
+                        minOverlap = overlap
+                        minOverlappingEntry = curr
+
+
+                N = RTreeNode().fromFileID(blockID=minOverlappingEntry.child_id)
                 return N
 
             # * If the pointers do not point to leaf nodes
             else:
-                pass
-                # TODO
                 # ! [Minimum area cost]
                 # ! Classical pick, the one with the least area enlargement (not overlap)
-                N = None
+                N = sortedChildren[0]["entry"]
                 return N
-
-            minSize = None
-            minChildID = None
-            minEntry = None
-
-            for i, entry in enumerate(currentNode):
-                entryExpansion = entry.calculateExpansion(record)
-                if minSize == None or entryExpansion < minSize:
-                    minChildID = entry.child_id
-                    minEntry = i
-
-            newNode = RTreeNode()
-            # TODO: If memory is needed, we can pass the IDs and kill the currentNode perhaps
-            self.insert(record, newNode.fromFileID(blockID = minChildID, parentID=currentNode.block_id))
-
-            # TODO: and bring it back here
-            currentNode[minEntry].recalculateRectangle(record)
-
-            # Since the nodes below may split themselves, check after the recursion
-            if currentNode.isOversized():
-                self._split_node(currentNode)
 
     #TODO
     def _split_leaf(self, node: RTreeNode):
         sorted_entries = sorted(node, key=lambda entry: entry.rect.get_min_coords())
 
+        # currentNode[minEntry].recalculateRectangle(record)
+
+        #
+        # # Since the nodes below may split themselves, check after the recursion
+        # if currentNode.isOversized():
+        #     self._split_node(currentNode)
 
 
     #TODO

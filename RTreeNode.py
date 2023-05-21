@@ -68,6 +68,31 @@ class Rectangle:
             self.min_coords = np.min([point.coordinates, self.min_coords])
             self.max_coords = np.max([point.coordinates, self.max_coords])
 
+    def intersectSize(self, otherRectangle):
+
+        rect1 = self
+        rect2 = otherRectangle
+
+        # Calculate the maximum of the lower bounds and the minimum of the upper bounds along each dimension
+        overlap_lengths = []
+        for i in range(len(rect1.max_coords)):
+            lower_bound = max(rect1.min_coords[i], rect2.min_coords[i])
+            upper_bound = min(rect1.max_coords[i], rect2.max_coords[i])
+
+            overlap_length = upper_bound - lower_bound
+            if overlap_length < 0:
+                return 0  # Cubes do not overlap, overlap length is negative
+            else:
+                overlap_lengths.append(overlap_length)
+
+        # Calculate the overlap volume
+        overlap_volume = 1
+        for length in overlap_lengths:
+            overlap_volume *= length
+
+        return overlap_volume
+
+
 class RTreeEntry():
     """
     R-Tree entry containing either a pointer to a child Node instance or data.
