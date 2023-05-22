@@ -61,6 +61,15 @@ class Rectangle:
 
         return newSize - self.calculateSize()
 
+    def calculateMargin(self) -> int:
+        # Calculate the margin of the rectangle (squareness)
+        # Margin is the sum of the length of all the edges of the rectangle
+        margin = 0
+        for axis in range(len(self.get_min_coords())):
+            margin += self.get_max_coords()[axis] - self.get_min_coords()[axis]
+
+        return margin
+
     def includePoint(self, point: Point):
         if self.contains_point(point):
             return
@@ -91,6 +100,12 @@ class Rectangle:
             overlap_volume *= length
 
         return overlap_volume
+
+    @classmethod
+    def boundingBox(cls, rectangles: list):
+        # Returns a rectangle that bounds the rectangles passed in as a parameter
+        bb = cls([r.get_min_coords() for r in rectangles] + [r.get_max_coords() for r in rectangles])
+        return bb
 
 
 class RTreeEntry():
