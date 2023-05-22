@@ -105,7 +105,13 @@ class RStarTree():
 
     #TODO
     def _split_node(self, node: RTreeNode):
+
         pass
+
+    def _choose_split_axis(self, node: RTreeNode) -> int:
+        pass
+        # TODO
+        # ! For each axis
 
     def search_record(self, p: Point) -> Record:
         """ Find a point indexed by the RTree """
