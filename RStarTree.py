@@ -103,6 +103,7 @@ class RStarTree():
     def _split_node(self, node: RTreeNode):
 
         axis = self._choose_split_axis(node)
+        distribution = self._choose_split_index(axis, node)
 
     def _choose_split_axis(self, node: RTreeNode) -> int:
         axis_count = len(node[0].rect.get_min_coords())
@@ -133,6 +134,34 @@ class RStarTree():
                 minMetric = metric
 
         return minAxis
+
+    def _choose_split_index(self, axis: int, node: RTreeNode):
+
+        distributionCount = node.M() - 2 * node.m() + 2
+        minMetric = None
+        minDistr = None
+
+        for corner in ("min", "max"):
+            if corner == "min":
+                grouping = sorted(node, key=lambda entry: entry.rect.get_min_coords()[axis])
+            else:
+                grouping = sorted(node, key=lambda entry: entry.rect.get_max_coords()[axis])
+
+            for k in range(1, distributionCount):
+                group1 = grouping[:(node.m() - 1) + k]
+                group2 = grouping[(node.m() - 1) + k:]
+
+                bb1 = Rectangle.boundingBox([entry.rect for entry in group1])
+                bb2 = Rectangle.boundingBox([entry.rect for entry in group2])
+
+                overlap_area = bb1.intersectSize(bb2)
+
+                if minMetric is None or overlap_area < minMetric:
+                    minDistr = [group1, group2]
+                    minMetric = overlap_area
+
+        return minDistr
+
 
     def search_record(self, p: Point) -> Record:
         """ Find a point indexed by the RTree """
