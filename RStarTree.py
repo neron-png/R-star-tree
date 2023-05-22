@@ -4,11 +4,11 @@ from storageHandler import *
 from config import *
 
 
-class RStarTree():
+class RStarTree:
 
     def __init__(self):
         self.root = RTreeNode(block_id=0)
-        self.currentBlock = self.root #This is a pointer!
+        self.currentBlock = self.root  # This is a pointer!
         print(self.currentBlock)
         print(self.currentBlock.toBytes())
 
@@ -36,7 +36,7 @@ class RStarTree():
             # self._split_leaf(insertionNode)
             while True:
                 self._overflow_treatment(node=insertionNode)
-                parent = RTreeNode().fromFileID(blockID = insertionNode.parent_id)
+                parent = RTreeNode().fromFileID(blockID=insertionNode.parent_id)
                 if not parent.isOversized():
                     break
                 else:
@@ -47,7 +47,7 @@ class RStarTree():
     def _overflow_treatment(self, node: RTreeNode):
         if self.root.block_id != node.block_id:
             self._reinsert(node)
-        #TODO: missing conditions
+        # TODO: missing conditions
         else:
             self._split_node(node)
 
@@ -69,20 +69,20 @@ class RStarTree():
         #     } for entry in node
         # ].sort(key = lambda entry: __dist__(entry["center"], boundingBoxCenter), reverse=True)
 
-        node.sort(key= lambda entry: __dist__(entry.rect.getCenter(), boundingBoxCenter), reverse=True)
+        node.sort(key=lambda entry: __dist__(entry.rect.getCenter(), boundingBoxCenter), reverse=True)
 
-        P = int(node.M()*REINSERT_PERCENTAGE)
+        P = int(node.M() * REINSERT_PERCENTAGE)
 
         reinsertable_entries = node.select(0, P)
 
-        node = node.select(P) # Note: this gets everything after P
+        node = node.select(P)  # Note: this gets everything after P
 
         # ? Updating block in storage
         node.store()
         newRect = node.boundingBox()
 
         # ? Fetching parent to update
-        parent = RTreeNode.fromFileID(node.parent_id)
+        parent = RTreeNode().fromFileID(blockID=node.parent_id)
         for entry in parent:
             if entry.child_id == node.block_id:
                 entry.rect = newRect
@@ -135,7 +135,7 @@ class RStarTree():
                         other = sample[j][entry].rect
                         overlap += curr.rect.intersectSize(other)
 
-                    if minOverlap == None or overlap < minOverlap:
+                    if minOverlap is None or overlap < minOverlap:
                         minOverlap = overlap
                         minOverlappingEntry = curr
 
@@ -148,17 +148,6 @@ class RStarTree():
                 # ! Classical pick, the one with the least area enlargement (not overlap)
                 N = RTreeNode().fromFileID(blockID=sortedChildren[0]["entry"].child_id)
                 return N
-
-    # TODO
-    def _split_leaf(self, node: RTreeNode):
-        sorted_entries = sorted(node, key=lambda entry: entry.rect.get_min_coords())
-
-        # currentNode[minEntry].recalculateRectangle(record)
-
-        #
-        # # Since the nodes below may split themselves, check after the recursion
-        # if currentNode.isOversized():
-        #     self._split_node(currentNode)
 
     # TODO
     def _split_node(self, node: RTreeNode):
@@ -228,13 +217,11 @@ class RStarTree():
 
         return minDistr
 
-
     def search_record(self, p: Point) -> Record:
         """ Find a point indexed by the RTree """
 
         data_ref = self.find_path(self.root, p)[-1][-1]
         return fetchBlock(DATAFILE, data_ref[0])[data_ref[1]]
-
 
     def delete_entry(self, p: Point):
         """ Delete an index record with given coordinates """
@@ -247,7 +234,6 @@ class RStarTree():
 
         # Condense the affected path of RTreeNodes
         self.condense_path(path)
-
 
     def condense_path(self, path: tuple):
         """ Condense a list of hierarchically connected RTreeNodes """
@@ -269,14 +255,11 @@ class RStarTree():
             #     else:
             #         parent_entry.rect = calculate_enclosing_rect(node.entries)
 
-
     def redistribute_entries(self, node: RTreeNode):
         pass
 
-
     def reinsert_entries(self, node: RTreeNode):
         pass
-
 
     def adjust_node(self, node: RTreeNode):
         if node.is_leaf_node:
@@ -284,7 +267,6 @@ class RStarTree():
         else:
             self.reinsert_entries(node)
         pass
-
 
     def delete_from_node(self, dest_details: tuple, p: Point):
         """ Delete the RTreeEntry, indexing point p, from an RTreeNode """
@@ -299,7 +281,6 @@ class RStarTree():
         storeBlock(node)
 
         # TODO: delete record from DATAFILE (block-id, slot-id = node[2][0], node[1][1])
-
 
     def find_path(self, node: RTreeNode, p: Point) -> list:
         """ Keep track of the block-and-slot ids of the RTreeNodes/Entries that
