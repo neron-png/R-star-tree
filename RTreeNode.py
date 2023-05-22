@@ -107,6 +107,9 @@ class Rectangle:
         bb = cls([r.get_min_coords() for r in rectangles] + [r.get_max_coords() for r in rectangles])
         return bb
 
+    def getCenter(self):
+        # ! IF NUMPY ISN'T USED THIS WILL BREAK
+        return (self.get_max_coords()+self.get_min_coords())/2
 
 class RTreeEntry():
     """
@@ -154,11 +157,13 @@ class RTreeEntry():
 ENTRY_SIZE = len(bytearray((str(RTreeEntry(Rectangle([[1.0 for _ in range(NUM_OF_COORDINATES)]]),None,None)).encode('utf-8'))))
 
 class RTreeNode(list):
-    def __init__(self, capacity = BLOCKSIZE, block_id: int = 0, parent_id: int = None):
+    def __init__(self, capacity = BLOCKSIZE, block_id: int = 0, parent_id: int = None, items=None):
         super().__init__()
         self.capacity = capacity
         self._block_id = block_id
         self._parent_id = parent_id
+        if items is not None:
+            self.extend(items)
 
     def fromFileID(self, blockID: int, parentID: int = None):
         self.__init__(block_id=blockID, parent_id=parentID)
@@ -225,3 +230,12 @@ class RTreeNode(list):
 
     def isOversized(self):
         return self.capacity >= ENTRY_SIZE*len(self)
+
+    def boundingBox(self):
+        return Rectangle.boundingBox(self)
+
+    def store(self):
+        sh.storeBlock(self)
+
+    def select(self, start=0, end=None):
+        RTreeNode(block_id=self._block_id, parent_id=self.parent_id, items = self[start : end])

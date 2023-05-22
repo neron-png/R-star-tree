@@ -12,7 +12,10 @@ class RStarTree():
         print(self.currentBlock)
         print(self.currentBlock.toBytes())
 
-    def insert(self, record: Record, currentNode: RTreeNode = None):
+    def insertData(self, entry: Record | RTreeEntry):
+        self._insert(record=entry, level=0)
+
+    def _insert(self, record: Record, currentNode: RTreeNode = None, level=0):
         # * creating a leaf entry from the record
         leafEntry = RTreeEntry(data=record)
 
@@ -28,9 +31,67 @@ class RStarTree():
         # * Inserting into the chosen leaf node
         insertionNode.append(leafEntry)
 
-        # * checking if oversized and splitting
+        # * checking if oversized and handing over to overflow treatment
         if insertionNode.isOversized():
-            self._split_leaf(insertionNode)
+            # self._split_leaf(insertionNode)
+            while True:
+                self._overflow_treatment(node=insertionNode)
+                parent = RTreeNode().fromFileID(blockID = insertionNode.parent_id)
+                if not parent.isOversized():
+                    break
+                else:
+                    insertionNode = parent
+
+        # TODO: manage overflow treatment according to intructions
+
+    def _overflow_treatment(self, node: RTreeNode):
+        if self.root.block_id != node.block_id:
+            self._reinsert(node)
+        #TODO: missing conditions
+        else:
+            self._split_node(node)
+
+    def _reinsert(self, node: RTreeNode):
+
+        def __dist__(point1, point2):
+            # Manhattan distance calculation
+            distance = 0
+            for i, _ in enumerate(point1):
+                distance += abs(point1[i] - point2[i])
+            return distance
+
+        boundingBox = node.boundingBox()
+        boundingBoxCenter = boundingBox.getCenter()
+        # entries = [
+        #     {
+        #         "entry": entry,
+        #         "center": entry.rect.getCenter()
+        #     } for entry in node
+        # ].sort(key = lambda entry: __dist__(entry["center"], boundingBoxCenter), reverse=True)
+
+        node.sort(key= lambda entry: __dist__(entry.rect.getCenter(), boundingBoxCenter), reverse=True)
+
+        P = int(node.M()*REINSERT_PERCENTAGE)
+
+        reinsertable_entries = node.select(0, P)
+
+        node = node.select(P) # Note: this gets everything after P
+
+        # ? Updating block in storage
+        node.store()
+        newRect = node.boundingBox()
+
+        # ? Fetching parent to update
+        parent = RTreeNode.fromFileID(node.parent_id)
+        for entry in parent:
+            if entry.child_id == node.block_id:
+                entry.rect = newRect
+                break
+
+        parent.store()
+
+        for entry in reinsertable_entries:
+            self.insertData(entry)
 
     def _choose_subtree(self, record: Record, currentNode=None):
         # * Check if we can import it where we are (on the leaf)
@@ -104,6 +165,11 @@ class RStarTree():
 
         axis = self._choose_split_axis(node)
         distribution = self._choose_split_index(axis, node)
+        # TODO
+        # FIXME
+        # *
+        # !
+        # ?
 
     def _choose_split_axis(self, node: RTreeNode) -> int:
         axis_count = len(node[0].rect.get_min_coords())
