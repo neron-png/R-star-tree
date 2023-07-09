@@ -1,5 +1,5 @@
+import storage_handler
+
 if __name__ == "__main__":
-
-    print("Hello World!")
-
+    storage_handler.write_blocks_to_datafile()
 

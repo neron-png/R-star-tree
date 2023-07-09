@@ -1,8 +1,14 @@
 
 BLOCKSIZE = 32000
-INPUTFILE = "map.osm"
+INPUTFILE = "testmap.osm"
 DATAFILE = "data.xml"
 INDEXFILE = "index.xml"
+
+
+COORDINATES = ["lat", "lon"]
+
+NAME_TAGS = ["name:", "name:el", "name:en"]
+
 
 FILEHEADER = """
 <header>
