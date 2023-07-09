@@ -5,7 +5,7 @@ DATAFILE = "data.xml"
 INDEXFILE = "index.xml"
 
 
-COORDINATES = ["lat", "lon"]
+COORDINATE_TAGS = ["lat", "lon"]
 
 NAME_TAGS = ["name:", "name:el", "name:en"]
 

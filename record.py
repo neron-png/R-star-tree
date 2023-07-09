@@ -9,7 +9,7 @@ class Record:
         self.id = data_element.attrib.get("id")
         
         self.cor = []
-        for c in config.COORDINATES:
+        for c in config.COORDINATE_TAGS:
             self.cor.append(data_element.attrib.get(c))
 
         self.name = "Unknown"
