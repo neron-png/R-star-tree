@@ -3,9 +3,6 @@ import config
 from record import Record
 
 
-def parse_data_to_slot():
-    pass
-
 def write_blocks_to_datafile():
     # Parse the XML file
 
