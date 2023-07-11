@@ -2,7 +2,6 @@ from lxml import etree
 from datetime import datetime
 from record import Record
 import config
-import json
 from block import Block
 
 
@@ -18,7 +17,7 @@ def write_blocks_to_datafile():
     # Initialize the xml parser and parse the raw-data variable 
     parser = etree.XMLParser(encoding='utf-8', recover=True)
     data = "<data>" + data + "</data>"
-    data = data.encode("utf-8")
+    data = data.encode('utf-8')
     parsedData = etree.fromstring(data, parser=parser)
 
 
