@@ -2,6 +2,7 @@ from lxml import etree
 from datetime import datetime
 from record import Record
 import config
+from block import Block
 
 
 def write_blocks_to_datafile():
@@ -16,18 +17,49 @@ def write_blocks_to_datafile():
     # Initialize the xml parser and parse the raw-data variable 
     parser = etree.XMLParser(encoding='utf-8', recover=True)
     data = "<data>" + data + "</data>"
-    data = data.encode("utf-8")
+    data = data.encode('utf-8')
     parsedData = etree.fromstring(data, parser=parser)
 
 
-    # List to store the extracted nodes
-    node_list = []
+    # First block of datafile where the parsed data will be stored at
+    block_index = 1
+    current_block = Block(block_index)
 
-    # Iterate over each "node" element in the XML
-    for element in parsedData.iter("node"):
-        try:
-            t = Record(element)
-            node_list.append(t)
-        except Exception as E:
-            with open("error_log",'+a') as log:
-                log.write(str(datetime.now()) + ": " + E.args[0] + "\n")
+    with open(config.DATAFILE, 'wb+') as datafile:
+        
+        # Create json object list opening
+        datafile.write(bytes("[", 'utf-8'))
+
+        # Compute how many slots/records can a block host
+        block_slots_limit = config.BLOCKSIZE // config.RECORDSIZE - 1
+
+        for element in parsedData.iter("node"):
+            try:
+                
+                # Parse raw-data element to Record object
+                t = Record(element)
+
+                if current_block.occupied() < block_slots_limit:
+                    
+                    # There is an empty slot that can host the parsing record
+                    current_block.append(t)
+                else:
+
+                    # The block is full
+                    # Fill it with dump '0's and write it in datafile 
+                    current_block.fill_dump()
+                    datafile.write(current_block.to_json())
+                    datafile.write(bytes(",\n", 'utf-8'))
+
+                    # Create a new block and store the parsing record there
+                    block_index += 1
+                    current_block = Block(block_index)
+                    current_block.append(t)
+
+            except Exception as E:
+                with open("error_log",'+a') as log:
+                    log.write(str(datetime.now()) + ": " + E.args[0] + "\n")
+        
+        # Create json object list closing
+        datafile.seek(datafile.tell() - 2)
+        datafile.write(bytes("]", 'utf-8'))

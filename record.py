@@ -8,7 +8,7 @@ class Record:
 
         # Extract the needed data from the xml node attributes 
         # parsed in data_element parameter
-
+    
         self.id = data_element.attrib.get("id")
         
         self.cor = []
@@ -45,5 +45,5 @@ class Record:
         return len(self.to_json())        
 
     def to_json(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=None, separators= (',', ':')).encode('utf-8')
+        return json.dumps(self, default=lambda o: o.__dict__, indent=None, separators= (',', ':')).encode('utf-8')
     
