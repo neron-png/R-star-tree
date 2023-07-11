@@ -10,7 +10,7 @@ def write_blocks_to_datafile():
     # and create the block-defined datafile
 
     # Store in temporary in a variable the raw-data
-    with open(config.INPUTFILE, 'r') as file:
+    with open(config.INPUTFILE, 'r', encoding='utf-8') as file:
         data = file.read()
 
     # Initialize the xml parser and parse the raw-data variable 
