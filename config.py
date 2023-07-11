@@ -2,7 +2,7 @@
 BLOCKSIZE = 32000
 RECORDSIZE = 256
 INPUTFILE = "map.osm"
-DATAFILE = "data.xml"
+DATAFILE = "data.json"
 INDEXFILE = "index.xml"
 
 
