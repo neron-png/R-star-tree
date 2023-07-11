@@ -1,4 +1,3 @@
-from RTreeNode import RTreeNode
 
 data = [
     b'{"_":"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","cor":["41.5163899","26.5291294"],"id":"164574780","name":"Unknown"}',
@@ -57,18 +56,14 @@ def z_order(*pointCoords, maxBitLen = None) -> int:
     :return: number. the distance from (0, 0) to the point (x, y)
     """
     n = len(pointCoords)
+    z = 0
     maxBitLen = sum([coord.bit_length() for coord in pointCoords])
-    x = pointCoords[0]
-    y = pointCoords[1]
 
-    new_x = 0
-    new_y = 0
-    for i in range(0, maxBitLen // 2):
-        new_x += ((x >> i) & 1) << ((i * 2))
-        new_y += ((y >> i) & 1) << ((i * 2) + 1)
+    for i in range(0, maxBitLen // n):
+        for j in range(n):
+            # Shifting each dimension coordinate i places and then giving it an offset
+            z += ((pointCoords[j] >> i) & 1) << ((i * n) + j)
 
-    z = new_x | new_y
-    print(bin(z))
     return z
 
 
@@ -80,13 +75,13 @@ def z_order(*pointCoords, maxBitLen = None) -> int:
 
 class Rtree():
     def __init__(self):
-        self.root = RTreeNode(block_id=0)
-        self.currentBlock = self.root  # This is a pointer!
-        print(self.currentBlock)
-        print(self.currentBlock.toBytes())
+        pass
+        # self.root = RTreeNode(block_id=0)
+        # self.currentBlock = self.root  # This is a pointer!
+        # print(self.currentBlock)
+        # print(self.currentBlock.toBytes())
 
 
 def run():
     coords = decimalise(float_coords)
     print(z_order(coords[0][0], coords[0][1]))
-    print(z_order(6, 6))
