@@ -1,5 +1,6 @@
 
 BLOCKSIZE = 32000
+RECORDSIZE = 256
 INPUTFILE = "map.osm"
 DATAFILE = "data.xml"
 INDEXFILE = "index.xml"
@@ -7,8 +8,9 @@ INDEXFILE = "index.xml"
 
 COORDINATE_TAGS = ["lat", "lon"]
 
-NAME_TAGS = ["name:", "name:el", "name:en"]
+NAME_TAGS = ["name", "name:el", "name:en"]
 
+DEFAULT_POINT_NAME = "Unknown"
 
 FILEHEADER = """
 <header>

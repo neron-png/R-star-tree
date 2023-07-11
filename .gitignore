@@ -168,3 +168,5 @@ cython_debug/
 *.osm
 
 .idea/
+.vscode/launch.json
+error_log
