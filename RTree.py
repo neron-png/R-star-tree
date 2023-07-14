@@ -1,3 +1,4 @@
+import config
 from RTReeUtil import z_order
 data = [
     b'{"_":"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","cor":["41.5163899","26.5291294"],"id":"164574780","name":"Unknown"}',
@@ -42,6 +43,7 @@ float_coords = [[41.5163899, 26.5291294], [41.5031784, 26.5323722], [41.5036382,
                 [41.5045611, 26.4720157], [41.5057181, 26.4696125]]
 
 
+# TODO: TEMP
 def decimalise(a: list) -> list:
     b = []
     for item in a:
@@ -51,15 +53,34 @@ def decimalise(a: list) -> list:
 
 class Rtree():
     def __init__(self):
-        pass
+        self.nodeCap: int = config.BLOCKSIZE // config.ENTRYSIZE
+
         # self.root = RTreeNode(block_id=0)
         # self.currentBlock = self.root  # This is a pointer!
         # print(self.currentBlock)
         # print(self.currentBlock.toBytes())
 
 
+    def bottom_up(self, points):
+        # Sorting the points based on their z-order score
+        #TODO: use the coordinates attribute once the schema is defined
+        sortedPoints = sorted(points, key = lambda item: z_order(*item) )
+
+        # Splitting that sorted list into leaf node - chunks.
+        # Each contains BLOCKSIZE//Entry-size entries
+        leaves = []
+        for i in range(0, len(sortedPoints), self.nodeCap):
+            leaves.append(sortedPoints[i:i+self.nodeCap])
+
+
+
+
+
+
 def run():
     coords = decimalise(float_coords)
-    # print(z_order(coords[0][0], coords[0][1]))
-    print(z_order(0b1110, 0b0111, 0b1011))
-    print(bin(z_order(0b0111, 0b1111, 0b1111)))
+
+    tempTree = Rtree()
+    # print(decimalise(float_coords))
+    tempTree.bottom_up(decimalise(float_coords))
+
