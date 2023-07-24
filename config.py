@@ -5,7 +5,7 @@ RECORDSIZE = 256
 ENTRYSIZE = 256
 INPUTFILE = "map.osm"
 DATAFILE = "data.json"
-INDEXFILE = "index.xml"
+INDEXFILE = "index.json"
 
 
 COORDINATE_TAGS = ["lat", "lon"]

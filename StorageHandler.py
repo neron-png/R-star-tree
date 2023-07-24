@@ -3,6 +3,7 @@ from datetime import datetime
 from Record import Record
 import config
 from Block import Block
+import json
 
 
 def write_blocks_to_datafile():
@@ -63,3 +64,10 @@ def write_blocks_to_datafile():
         # Create json object list closing
         datafile.seek(datafile.tell() - 2)
         datafile.write(bytes("]", 'utf-8'))
+
+
+def writeRtreeToFile(rtree):
+     with open(config.INDEXFILE, "w+") as indexFile:
+         json.dump(rtree, indexFile)
+
+         

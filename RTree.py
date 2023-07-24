@@ -3,6 +3,7 @@ import config
 from RTReeUtil import zOrder
 import json
 from pprint import pprint  # FIXME debug
+import StorageHandler
 
 
 
@@ -95,3 +96,5 @@ def run():
     parseData = parseDataJson()
     tempTree = Rtree()
     tempTree.bottom_up(parseData)
+    print(tempTree.nodes)
+    StorageHandler.writeRtreeToFile(tempTree.nodes)

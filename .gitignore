@@ -171,3 +171,4 @@ cython_debug/
 .vscode/launch.json
 error_log
 data.json
+index.json
