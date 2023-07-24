@@ -11,6 +11,14 @@ def getBlockFromDisk(blockID):
     with open(config.DATAFILE, 'r', encoding='utf-8') as datafile:
         datafile.seek(blockID*config.BLOCKSIZE)
         contents = datafile.read(config.BLOCKSIZE)
+        
+        if contents.startswith("["):
+            contents = contents[1:]
+        if contents.endswith("]"):
+            contents = contents[:-1]
+        if contents.endswith(","):
+            contents = contents[:-1]
+        
         print(contents)
 
 
