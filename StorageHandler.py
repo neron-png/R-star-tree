@@ -4,6 +4,34 @@ from Record import Record
 import config
 from Block import Block
 import json
+import itertools
+
+
+def searchByID(id):
+    """
+    @params: No.de id, id of node to be deleted
+        @return: (True, record) if found | (False, "Reason") if not succeeded
+    """
+    item = None
+
+
+    flag = False
+    for i in itertools.count(start=1):
+        if flag:
+            break
+        try:
+            block = getBlockFromDisk(i)
+            for record in block["slots"]:
+                if record["id"] == id:
+                    item = record
+                    flag = True
+                    break
+
+        except Exception as e:
+            return (False, "Item not found")
+            break
+    
+    return (True, item)
 
 
 def getBlockFromDisk(blockID):
@@ -19,7 +47,18 @@ def getBlockFromDisk(blockID):
         if contents.endswith(","):
             contents = contents[:-1]
         
-        print(contents)
+        return json.loads(contents)
+
+
+def writeBlockToDisk(blockID, block):
+    contents = json.dumps(block)
+    if blockID == 0 :
+        "[" + block
+        #TODO padd to match the blocksize
+
+    with open(config.DATAFILE, 'w', encoding='utf-8') as datafile:
+        datafile.seek(blockID*config.BLOCKSIZE)
+        contents = datafile.read(config.BLOCKSIZE)
 
 
 def write_blocks_to_datafile():
