@@ -34,7 +34,7 @@ def write_blocks_to_datafile():
         # Compute how many slots/records can a block host
         block_slots_limit = config.BLOCKSIZE // config.RECORDSIZE - 1
 
-        for element in parsedData.iter("node"):
+        for i, element in enumerate(parsedData.iter("node")):
             try:
                 
                 # Parse raw-data element to Record object
@@ -48,7 +48,7 @@ def write_blocks_to_datafile():
 
                     # The block is full
                     # Fill it with dump '0's and write it in datafile 
-                    current_block.fill_dump()
+                    current_block.fill_dump(1 if i == 0 else 0)
                     datafile.write(current_block.to_json())
                     datafile.write(bytes(",\n", 'utf-8'))
 

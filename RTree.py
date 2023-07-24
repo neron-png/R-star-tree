@@ -4,15 +4,26 @@ from RTReeUtil import zOrder
 import json
 from pprint import pprint  # FIXME debug
 import StorageHandler
-
+import Queries
 
 
 class Rtree():
 
-    def __init__(self):
+    def __init__(self, indexfile=None):
         self.nodeCap: int = config.BLOCKSIZE // config.ENTRYSIZE
         self.nodes = []
 
+        if indexfile is not None:            
+            with open(config.INDEXFILE, "r") as f:
+                self.nodes = json.load(f)
+
+
+    def rangeQuery(self, corners: list) -> list:
+
+        if len(corners) != config.NUM_OF_COORDINATES:
+            raise Exception("Provide the exact minumum amount of points for a " + config.NUM_OF_COORDINATES + "-D rectangle.")
+        
+        return Queries.rangeQuery(self.nodes[-1], corners)
 
     def bottom_up(self, points):
         """
@@ -54,6 +65,8 @@ class Rtree():
                             "rectangle" : RTReeUtil.rectBoundingBox([leafNode["rectangle"] for leafNode in buffer])}
                 self.nodes.append(new_item)
                 buffer = []
+
+
 
 
 
