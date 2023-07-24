@@ -38,7 +38,7 @@ def write_blocks_to_datafile():
                 
                 # Parse raw-data element to Record object
                 t = Record(element)
-
+                
                 if current_block.occupied() < block_slots_limit:
                     
                     # There is an empty slot that can host the parsing record
