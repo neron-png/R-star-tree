@@ -66,7 +66,15 @@ class Rtree():
                 buffer = []
 
 
+    def delete(self, id):
+        import deleteTemp
+        deleteTemp.delete(self.nodes, self.nodeCap, id)
 
+
+
+    def delete(self, id):
+        import deleteTemp
+        deleteTemp.delete(self.nodes, self.nodeCap, id)
 
 
 def parseDataJson():
@@ -93,8 +101,11 @@ def parseDataJson():
 
 
 def run():
+
     # coords = decimalise(float_coords)
     parseData = parseDataJson()
     tempTree = Rtree()
     tempTree.bottom_up(parseData)
+    StorageHandler.writeRtreeToFile(tempTree.nodes)
+    tempTree.delete(1)
     StorageHandler.writeRtreeToFile(tempTree.nodes)

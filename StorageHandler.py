@@ -6,6 +6,14 @@ from Block import Block
 import json
 
 
+def getBlockFromDisk(blockID):
+
+    with open(config.DATAFILE, 'r', encoding='utf-8') as datafile:
+        datafile.seek(blockID*config.BLOCKSIZE)
+        contents = datafile.read(config.BLOCKSIZE)
+        print(contents)
+
+
 def write_blocks_to_datafile():
     
     # Parse the XML raw-data input file 
@@ -70,4 +78,3 @@ def writeRtreeToFile(rtree):
      with open(config.INDEXFILE, "w+") as indexFile:
          json.dump(rtree, indexFile)
 
-         
