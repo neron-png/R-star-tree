@@ -25,7 +25,6 @@ class Rtree():
         """
 
         # Sorting the points based on their z-order score
-        # TODO: use the coordinates attribute once the schema is defined
         sortedPoints = sorted(points, key=lambda item: zOrder(*item["coords"]))
 
         # Splitting that sorted list into leaf node - chunks.
@@ -40,12 +39,7 @@ class Rtree():
             # Adding a bounding box attribute
             self.nodes[-1]["rectangle"] = RTReeUtil.leafBoundingRect([item["coords"] for item in self.nodes[-1]["records"]])
 
-        # FIXME
-        # pprint(self.nodes[-10:])
-        # pprint(self.nodes[:4])
-        # print([x["rectangle"] for x in self.nodes[:4]])
-        # print(RTReeUtil.rect_bounding_box([x["rectangle"] for x in self.nodes[:4]]))
-        # FIXME
+
 
                                                     # Let's iterate through the leaf blocks to make parent nodes!
         buffer = []                                 # Buffer to temporarily encapsulate the node
@@ -61,11 +55,6 @@ class Rtree():
                 self.nodes.append(new_item)
                 buffer = []
 
-        # FIXME
-        # pprint(self.nodes)
-        # nestedlist = RTReeUtil.toNestedJson(self.nodes)
-        # print(json.dumps(nestedlist))
-        # FIXME
 
 
 def parseDataJson():
