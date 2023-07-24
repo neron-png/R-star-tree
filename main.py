@@ -1,8 +1,8 @@
-import storage_handler
+import StorageHandler
 import RTree
 
 
 if __name__ == "__main__":
-    # storage_handler.write_blocks_to_datafile()
-    RTree.run()
+     StorageHandler.write_blocks_to_datafile()
+    #RTree.run()
 

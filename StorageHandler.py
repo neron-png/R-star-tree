@@ -1,8 +1,8 @@
 from lxml import etree
 from datetime import datetime
-from record import Record
+from Record import Record
 import config
-from block import Block
+from Block import Block
 
 
 def write_blocks_to_datafile():

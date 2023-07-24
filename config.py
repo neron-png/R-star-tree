@@ -14,6 +14,8 @@ NAME_TAGS = ["name", "name:el", "name:en"]
 
 DEFAULT_POINT_NAME = "Unknown"
 
+MANTISSA = 10 ** 10
+
 FILEHEADER = """
 <header>
 <type>{0}</type>

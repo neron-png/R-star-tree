@@ -11,9 +11,10 @@ class Record:
     
         self.id = data_element.attrib.get("id")
         
-        self.cor = []
+        self.coords = []
         for c in config.COORDINATE_TAGS:
-            self.cor.append(data_element.attrib.get(c))
+            # Decimalising to remove floating point
+            self.coords.append(int(float(data_element.attrib.get(c)) * config.MANTISSA))
 
         self.name = config.DEFAULT_POINT_NAME
         for t in data_element:
@@ -43,6 +44,9 @@ class Record:
         
     def __size__(self):
         return len(self.to_json())        
+
+    def __str__(self):
+        return f'id:{self.id}\nname:{self.name}\ncoordinates:{[c / config.MANTISSA for c in self.coords]}'
 
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__, indent=None, separators= (',', ':')).encode('utf-8')
