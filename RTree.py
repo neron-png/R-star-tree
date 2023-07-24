@@ -20,10 +20,10 @@ class Rtree():
 
     def rangeQuery(self, corners: list) -> list:
 
-        if len(corners) != config.NUM_OF_COORDINATES:
+        if len(corners) != len(self.nodes[-1]) or len(corners) != config.NUM_OF_COORDINATES:
             raise Exception("Provide the exact minumum amount of points for a " + config.NUM_OF_COORDINATES + "-D rectangle.")
         
-        return Queries.rangeQuery(self.nodes[-1], corners)
+        return Queries.rangeQuery(self.nodes[-1],[c * config.MANTISSA for c in corners])
 
     def bottom_up(self, points):
         """

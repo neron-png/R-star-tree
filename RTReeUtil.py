@@ -80,3 +80,18 @@ def toNestedJson(nodeList: list):
             newArray[item["id"]] = traverse(item["id"])
 
     return newArray
+
+
+def intersects(r1: list, r2: list) -> bool:
+    contains = True
+    
+    for i, c in enumerate(r1[0]):
+        if not r2[1][i] >= c:
+            return False
+
+    for i, c in enumerate(r2[1]):
+        if not r1[0][i] >= c:
+            return False
+    
+    return contains
+
