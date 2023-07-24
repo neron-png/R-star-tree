@@ -2,17 +2,8 @@ import RTReeUtil
 import config
 from RTReeUtil import z_order
 import json
-
 from pprint import pprint  # FIXME debug
 
-
-
-# TODO: TEMP
-def decimalise(a: list) -> list:
-    b = []
-    for item in a:
-        b.append([int(item[0] * 10 ** 10), int(item[1] * 10 ** 10)])
-    return b
 
 
 class Rtree():
@@ -25,24 +16,31 @@ class Rtree():
         # print(self.currentBlock)
         # print(self.currentBlock.toBytes())
 
+
     def bottom_up(self, points):
         """
-        :param points: list of simple point coordinates [[x, y], [x1, y1], [x2, y2]]
+        :param points: list of simple point coordinates [
+            {"bID": int,
+            "sIndex": int,
+            "coords": [x, y]}
+            , ...
         :return: None, fills up the self.nodes as a flat list
         """
 
         # Sorting the points based on their z-order score
         # TODO: use the coordinates attribute once the schema is defined
-        sortedPoints = sorted(points, key=lambda item: z_order(*item))
+        sortedPoints = sorted(points, key=lambda item: z_order(*item["coords"]))
 
         # Splitting that sorted list into leaf node - chunks.
         # Each contains BLOCKSIZE//Entry-size entries
         for i in range(0, len(sortedPoints), self.nodeCap):
             leafNode = sortedPoints[i:i + self.nodeCap]
             self.nodes.append({"id": i // self.nodeCap,
+                               "bID": leafNode["bID"],
+                               "sIndex": leafNode["sIndex"],
                                "type": "l",
                                "level": 0,
-                               "coords": leafNode})  # FIXME: Update to include pointer to the data
+                               "coords": leafNode["coords"]})  # FIXME: Update to include pointer to the data
             # Adding a bounding box attribute
             self.nodes[-1]["rectangle"] = RTReeUtil.leaf_bounding_rect(self.nodes[-1]["coords"])
 
@@ -76,21 +74,32 @@ class Rtree():
         print(json.dumps(nestedlist))
         # FIXME
 
-# FIXME: TEMPORARY
-def createCoordSample():
+
+def parseDataJson():
+    """
+        Parsing the fully formatted Json into a list of coordinates and record IDs ready to be
+        parsed into the bottom up place.
+    """
     sample = []
     import json
-    with open("data.json", "r") as f:
+    with open(config.DATAFILE, "r") as f:
         sample = json.load(f)
-    sample = [[[float(y) for y in z["cor"]] for z in x["slots"]] for x in sample]  # Holy shit what has this become
-    sample = [item for sublist in sample for item in sublist]  # Flattening the list by one level
-    return sample
+
+    parsedSample = []
+    for block in sample:
+        for i, item in enumerate(block): 
+            parsedItem =    {
+                                "bID": block["id"],
+                                "sIndex": i,
+                                "coords": item["coords"]
+                            }
+            parsedSample.append( parsedItem )
+
+    return parsedSample
 
 
 def run():
     # coords = decimalise(float_coords)
-    sample = createCoordSample()
-    coords = decimalise(sample)
-
+    parseData = parseDataJson()
     tempTree = Rtree()
-    tempTree.bottom_up(coords)
+    tempTree.bottom_up(parseData)
