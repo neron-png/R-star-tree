@@ -72,10 +72,6 @@ class Rtree():
 
 
 
-    def delete(self, id):
-        import deleteTemp
-        deleteTemp.delete(self.nodes, self.nodeCap, id)
-
 
 def parseDataJson():
     """
@@ -107,5 +103,5 @@ def run():
     tempTree = Rtree()
     tempTree.bottom_up(parseData)
     StorageHandler.writeRtreeToFile(tempTree.nodes)
-    tempTree.delete(1)
-    StorageHandler.writeRtreeToFile(tempTree.nodes)
+    tempTree.delete(301073184)
+    # StorageHandler.writeRtreeToFile(tempTree.nodes)
