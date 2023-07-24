@@ -1,6 +1,6 @@
 import json
 import config
-from record import Record 
+from Record import Record 
 
 
 class Block:
