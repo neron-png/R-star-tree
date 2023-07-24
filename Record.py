@@ -9,7 +9,7 @@ class Record:
         # Extract the needed data from the xml node attributes 
         # parsed in data_element parameter
     
-        self.id = data_element.attrib.get("id")
+        self.id = int(data_element.attrib.get("id"))
         
         self.coords = []
         for c in config.COORDINATE_TAGS:
