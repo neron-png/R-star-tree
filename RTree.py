@@ -35,14 +35,13 @@ class Rtree():
         # Each contains BLOCKSIZE//Entry-size entries
         for i in range(0, len(sortedPoints), self.nodeCap):
             leafNode = sortedPoints[i:i + self.nodeCap]
+            print(leafNode)
             self.nodes.append({"id": i // self.nodeCap,
-                               "bID": leafNode["bID"],
-                               "sIndex": leafNode["sIndex"],
                                "type": "l",
                                "level": 0,
-                               "coords": leafNode["coords"]})  # FIXME: Update to include pointer to the data
+                               "records": leafNode})  # FIXME: Update to include pointer to the data
             # Adding a bounding box attribute
-            self.nodes[-1]["rectangle"] = RTReeUtil.leaf_bounding_rect(self.nodes[-1]["coords"])
+            self.nodes[-1]["rectangle"] = RTReeUtil.leaf_bounding_rect([item["coords"] for item in self.nodes[-1]["records"]])
 
         # FIXME
         # pprint(self.nodes[-10:])
@@ -87,7 +86,7 @@ def parseDataJson():
 
     parsedSample = []
     for block in sample:
-        for i, item in enumerate(block): 
+        for i, item in enumerate(block["slots"]): 
             parsedItem =    {
                                 "bID": block["id"],
                                 "sIndex": i,
