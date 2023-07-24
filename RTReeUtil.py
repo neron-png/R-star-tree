@@ -2,7 +2,7 @@
 ###########
 # Loading #
 ###########
-def z_order(*pointCoords, maxBitLen = None) -> int:
+def zOrder(*pointCoords, maxBitLen = None) -> int:
     """Computes the z-order index from coordinates in n dimensions
 
     :param (x, y, z ...): n-dimensional integer coordinates of point
@@ -22,7 +22,7 @@ def z_order(*pointCoords, maxBitLen = None) -> int:
     return z
 
 
-def leaf_bounding_rect(leaf_coordinates):
+def leafBoundingRect(leaf_coordinates):
     """
 
     :param leaf_coordinates: - schema:   [[416101905000, 265951733000],
@@ -43,7 +43,7 @@ def leaf_bounding_rect(leaf_coordinates):
 
     return [low_corner, high_corner]
 
-def rect_bounding_box(rectangles):
+def rectBoundingBox(rectangles):
     """
 
     :param rectangles: [[[x, y,...n], [x', y',...n']], [[x1, y1,...n1], [x1', y1',...n1']]]

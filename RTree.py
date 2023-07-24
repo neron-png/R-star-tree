@@ -1,6 +1,6 @@
 import RTReeUtil
 import config
-from RTReeUtil import z_order
+from RTReeUtil import zOrder
 import json
 from pprint import pprint  # FIXME debug
 
@@ -11,10 +11,6 @@ class Rtree():
     def __init__(self):
         self.nodeCap: int = config.BLOCKSIZE // config.ENTRYSIZE
         self.nodes = []
-        # self.root = RTreeNode(block_id=0)
-        # self.currentBlock = self.root  # This is a pointer!
-        # print(self.currentBlock)
-        # print(self.currentBlock.toBytes())
 
 
     def bottom_up(self, points):
@@ -29,7 +25,7 @@ class Rtree():
 
         # Sorting the points based on their z-order score
         # TODO: use the coordinates attribute once the schema is defined
-        sortedPoints = sorted(points, key=lambda item: z_order(*item["coords"]))
+        sortedPoints = sorted(points, key=lambda item: zOrder(*item["coords"]))
 
         # Splitting that sorted list into leaf node - chunks.
         # Each contains BLOCKSIZE//Entry-size entries
@@ -41,7 +37,7 @@ class Rtree():
                                "level": 0,
                                "records": leafNode})  # FIXME: Update to include pointer to the data
             # Adding a bounding box attribute
-            self.nodes[-1]["rectangle"] = RTReeUtil.leaf_bounding_rect([item["coords"] for item in self.nodes[-1]["records"]])
+            self.nodes[-1]["rectangle"] = RTReeUtil.leafBoundingRect([item["coords"] for item in self.nodes[-1]["records"]])
 
         # FIXME
         # pprint(self.nodes[-10:])
@@ -54,23 +50,20 @@ class Rtree():
         buffer = []                                 # Buffer to temporarily encapsulate the node
         for i, leaf in enumerate(self.nodes):       # Adding items to that buffer until it fills
 
-            # if leaf["type"] == "n":
-            #     break
-
             buffer.append(leaf)
             if len(buffer) == self.nodeCap:         # Let's add to the end of the list a new block
                 new_item = {"id" : len(self.nodes),
                             "children" : [child["id"] for child in buffer],
                             "level": buffer[0]["level"]+1,
                             "type": "n",
-                            "rectangle" : RTReeUtil.rect_bounding_box([leafNode["rectangle"] for leafNode in buffer])}
+                            "rectangle" : RTReeUtil.rectBoundingBox([leafNode["rectangle"] for leafNode in buffer])}
                 self.nodes.append(new_item)
                 buffer = []
 
         # FIXME
-        pprint(self.nodes)
-        nestedlist = RTReeUtil.toNestedJson(self.nodes)
-        print(json.dumps(nestedlist))
+        # pprint(self.nodes)
+        # nestedlist = RTReeUtil.toNestedJson(self.nodes)
+        # print(json.dumps(nestedlist))
         # FIXME
 
 
