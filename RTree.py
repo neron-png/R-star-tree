@@ -31,7 +31,6 @@ class Rtree():
         # Each contains BLOCKSIZE//Entry-size entries
         for i in range(0, len(sortedPoints), self.nodeCap):
             leafNode = sortedPoints[i:i + self.nodeCap]
-            print(leafNode)
             self.nodes.append({"id": i // self.nodeCap,
                                "type": "l",
                                "level": 0,
@@ -85,5 +84,4 @@ def run():
     parseData = parseDataJson()
     tempTree = Rtree()
     tempTree.bottom_up(parseData)
-    print(tempTree.nodes)
     StorageHandler.writeRtreeToFile(tempTree.nodes)
