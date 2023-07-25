@@ -27,8 +27,8 @@ class Rtree():
 
     def bottom_up(self, points):
         """
-        :param points: list of simple point coordinates [
-            {"bID": int,
+        :param points: list of simple point coordinates 
+            [{"bID": int,
             "sIndex": int,
             "coords": [x, y]}
             , ...
