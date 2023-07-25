@@ -42,8 +42,8 @@ if __name__ == "__main__":
     ax.plot(x, y, 'bo')
     
     for i, rect in enumerate(rectangles):
-        ax.add_patch( Rectangle(rect, rectangles_width[i][0], rectangles_width[i][1], fill=False, linewidth=rectangle_levels[i], edgecolor=levelColors[rectangle_levels[i]]))
-    
+        ax.add_patch( Rectangle(rect, rectangles_width[i][0], rectangles_width[i][1], fill=False, linewidth=rectangle_levels[i]+1, edgecolor=levelColors[rectangle_levels[i]]))
+        ax.text(rect[0], rect[1], rectangle_ids[i])
     plt.show()
     
     
