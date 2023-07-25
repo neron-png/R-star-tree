@@ -101,7 +101,7 @@ def run():
     # coords = decimalise(float_coords)
     # parseData = parseDataJson()
     tempTree = Rtree(config.INDEXFILE)
-    print(tempTree.rangeQuery([[41.4,26.4],[41.51,26.5]]))
+    (tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
     # tempTree.bottom_up(parseData)
     # StorageHandler.writeRtreeToFile(tempTree.nodes)
     # tempTree.delete(301073184)

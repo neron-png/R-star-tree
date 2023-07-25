@@ -19,4 +19,7 @@ def rangeQuery(rtree: RTree, rootNode: list, range: list) -> list:
         else:
             return []
     else:
-        return rootNode["records"]
+        for point in rootNode["records"]:
+            if util.rectangleContains(range, point["coords"]):
+                result.append(point)
+        return result
