@@ -98,4 +98,5 @@ def rectangleContains(r: list, p: list) -> bool:
     for i in range(len(r[0])):
         if not ( p[i] >= r[0][i] and p[i] <= r[1][i] ):
             return False
+        # print(f'{p[i]} >= {r[0][i]} and {p[i]} <= {r[1][i]}')
     return True
