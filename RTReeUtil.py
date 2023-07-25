@@ -82,16 +82,13 @@ def toNestedJson(nodeList: list):
     return newArray
 
 
-def intersects(r1: list, r2: list) -> bool:
-    contains = True
-    
+def rectangleIntersection(r1: list, r2: list) -> bool:
     for i, c in enumerate(r1[0]):
         if not r2[1][i] >= c:
             return False
 
-    for i, c in enumerate(r2[1]):
-        if not r1[0][i] >= c:
+    for i, c in enumerate(r1[1]):
+        if not r2[0][i] <= c:
             return False
     
-    return contains
-
+    return True
