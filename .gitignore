@@ -7,6 +7,7 @@ a.txt
 b.txt
 c
 storageHandler_old.py
+small_Data.json
 
 # C extensions
 *.so

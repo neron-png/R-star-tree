@@ -25,6 +25,7 @@ class Rtree():
         
         return Queries.rangeQuery(self.nodes[-1],[c * config.MANTISSA for c in corners])
 
+    
     def bottom_up(self, points):
         """
         :param points: list of simple point coordinates 
@@ -34,36 +35,8 @@ class Rtree():
             , ...
         :return: None, fills up the self.nodes as a flat list
         """
-
-        # Sorting the points based on their z-order score
-        sortedPoints = sorted(points, key=lambda item: zOrder(*item["coords"]))
-
-        # Splitting that sorted list into leaf node - chunks.
-        # Each contains BLOCKSIZE//Entry-size entries
-        for i in range(0, len(sortedPoints), self.nodeCap):
-            leafNode = sortedPoints[i:i + self.nodeCap]
-            self.nodes.append({"id": i // self.nodeCap,
-                               "type": "l",
-                               "level": 0,
-                               "records": leafNode})  # FIXME: Update to include pointer to the data
-            # Adding a bounding box attribute
-            self.nodes[-1]["rectangle"] = RTReeUtil.leafBoundingRect([item["coords"] for item in self.nodes[-1]["records"]])
-
-
-
-                                                    # Let's iterate through the leaf blocks to make parent nodes!
-        buffer = []                                 # Buffer to temporarily encapsulate the node
-        for i, leaf in enumerate(self.nodes):       # Adding items to that buffer until it fills
-
-            buffer.append(leaf)
-            if len(buffer) == self.nodeCap:         # Let's add to the end of the list a new block
-                new_item = {"id" : len(self.nodes),
-                            "children" : [child["id"] for child in buffer],
-                            "level": buffer[0]["level"]+1,
-                            "type": "n",
-                            "rectangle" : RTReeUtil.rectBoundingBox([leafNode["rectangle"] for leafNode in buffer])}
-                self.nodes.append(new_item)
-                buffer = []
+        from RTReeBulkload import bottom_up
+        self.nodes = bottom_up(self.nodeCap, self.nodes, points)
 
 
     def delete(self, id):
