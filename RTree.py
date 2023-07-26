@@ -19,11 +19,11 @@ class Rtree():
 
 
     def rangeQuery(self, corners: list) -> list:
+        if len(corners) != config.NUM_OF_COORDINATES:
+            raise Exception("Provide the exact minumum amount of points for a " + str(config.NUM_OF_COORDINATES) + "-D rectangle.")
 
-        if len(corners) != len(self.nodes[-1]) or len(corners) != config.NUM_OF_COORDINATES:
-            raise Exception("Provide the exact minumum amount of points for a " + config.NUM_OF_COORDINATES + "-D rectangle.")
-        
-        return Queries.rangeQuery(self.nodes[-1],[c * config.MANTISSA for c in corners])
+        return Queries.rangeQuery(self, self.nodes[-1], [[int(corner[axis] * config.MANTISSA) for axis in range(len(corner))] for _, corner in enumerate(corners)]
+)
 
     
     def bottom_up(self, points):
@@ -72,9 +72,10 @@ def parseDataJson():
 def run():
 
     # coords = decimalise(float_coords)
-    parseData = parseDataJson()
-    tempTree = Rtree()
-    tempTree.bottom_up(parseData)
-    StorageHandler.writeRtreeToFile(tempTree.nodes)
-    tempTree.delete(301073184)
+    # parseData = parseDataJson()
+    tempTree = Rtree(config.INDEXFILE)
+    # print(tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
+    # tempTree.bottom_up(parseData)
+    # StorageHandler.writeRtreeToFile(tempTree.nodes)
+    # tempTree.delete(301073184)
     # StorageHandler.writeRtreeToFile(tempTree.nodes)
