@@ -1,7 +1,25 @@
 import config
+
 ###########
 # Loading #
 ###########
+
+def inRectangle(point: list, rectangle: list):
+    """
+    
+    :param  point -> (x, y, z ...): n-dimensional integer coordinates of point
+            rectangle -> [(x1, y1, z1 ...), (x2, y2, z2 ...)]
+    :return: bool. the distance from (0, 0) to the point (x, y)
+    """
+    
+    for i, coord in enumerate(point):
+        if not coord >= rectangle[0][i] or not coord <= rectangle[1][i]:
+            return False
+                
+    
+    return True
+
+
 def parseDataJson():
     """
         Parsing the fully formatted Json into a list of coordinates and record IDs ready to be

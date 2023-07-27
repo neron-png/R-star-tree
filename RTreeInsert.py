@@ -11,6 +11,8 @@ def insert(nodeCap: int, nodes: list, record: Record) -> list:
     :return: Nodes
     """
     
+    
+    
     return nodes
 
     
