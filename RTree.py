@@ -1,3 +1,4 @@
+from pprint import pprint
 import RTReeUtil
 from Record import Record
 import config
@@ -11,11 +12,17 @@ class Rtree():
     def __init__(self, indexfile=None):
         self.nodeCap: int = config.BLOCKSIZE // config.ENTRYSIZE
         self.nodes = []
+        self.nodes_ = {"root": {"id": 0, "level": 0}}
+        """
+        nodes = [{"id": 1, "level":0, "type": n, "rectangle" = []}, ...]
+        nodes_ = {"root": {"id": 0, "level": 0},
+                    1: {"id": 1, "level":0, "type": n, "rectangle" = []}...}
+        """
 
         if indexfile is not None:            
             with open(config.INDEXFILE, "r") as f:
-                self.nodes = json.load(f)
-
+                self.nodes_ = self.nodes = json.load(f, object_hook=RTReeUtil.intObjectHook)
+                
 
     def rangeQuery(self, corners: list) -> list:
         if len(corners) != config.NUM_OF_COORDINATES:
@@ -34,7 +41,7 @@ class Rtree():
         :return: None, fills up the self.nodes as a flat list
         """
         from RTReeBulkload import bottom_up
-        self.nodes = bottom_up(self.nodeCap, self.nodes, points)
+        self.nodes_ = bottom_up(self.nodeCap, self.nodes_, points)
 
     
     def insert(self, record: dict):
@@ -47,12 +54,12 @@ class Rtree():
         :return: None, adds node to tree
         """
         from RTreeInsert import insert
-        self.nodes = insert(self.nodeCap, self.nodes, record)
+        self.nodes_ = insert(self.nodeCap, self.nodes_, record)
         
 
     def delete(self, id):
         import RTReeDelete
-        RTReeDelete.delete(self.nodes, self.nodeCap, id)
+        RTReeDelete.delete(self.nodes_, self.nodeCap, id)
 
 
 
@@ -60,11 +67,11 @@ class Rtree():
 def run():
 
     parseData = RTReeUtil.parseDataJson()
-    tempTree = Rtree(config.INDEXFILE)
-    # tempTree = Rtree()
+    # tempTree = Rtree(config.INDEXFILE)
+    tempTree = Rtree()
     # print(tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
-    # tempTree.bottom_up(parseData)
-    # StorageHandler.writeRtreeToFile(tempTree.nodes)
-    tempTree.insert()
+    tempTree.bottom_up(parseData)
+    StorageHandler.writeRtreeToFile(tempTree.nodes_)
+    # tempTree.insert()
     # tempTree.delete(301073184)
     # StorageHandler.writeRtreeToFile(tempTree.nodes)

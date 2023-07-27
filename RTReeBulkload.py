@@ -3,7 +3,7 @@ import config
 from RTReeUtil import zOrder
 import math
 
-def bottom_up(nodeCap: int, nodes: list, points) -> list:
+def bottom_up(nodeCap: int, nodes: dict, points) -> dict:
         """
         :param points: list of simple point coordinates 
             [{"bID": int,
@@ -20,12 +20,13 @@ def bottom_up(nodeCap: int, nodes: list, points) -> list:
         # Each contains BLOCKSIZE//Entry-size entries
         for i in range(0, len(sortedPoints), nodeCap):
             leafRecords = sortedPoints[i:i + nodeCap]
-            nodes.append({      "id": i // nodeCap,
+            id = i // nodeCap
+            nodes[id] = {      "id": i // nodeCap,
                                 "type": "l",
                                 "level": 0,
-                                "records": leafRecords})
+                                "records": leafRecords,
+                                "rectangle": RTReeUtil.leafBoundingRect([item["coords"] for item in leafRecords])}
             # Adding a bounding box attribute
-            nodes[-1]["rectangle"] = RTReeUtil.leafBoundingRect([item["coords"] for item in leafRecords])
 
         """
         # while sortedPoints:
@@ -48,46 +49,38 @@ def bottom_up(nodeCap: int, nodes: list, points) -> list:
         for level in range(expected_max_height):
             levelCount = 0
             buffer = []                                 # Buffer to temporarily encapsulate the node
-            for node in nodes:                          # Adding items to that buffer until it fills
+            for nodeID in list(nodes):                        # Adding items to that buffer until it fills
+                if nodeID == "root":
+                    continue
                 
+                node = nodes[nodeID]
                 if node["level"] == level:
                     
                     buffer.append(node)
                     if len(buffer) == nodeCap:         # Let's add to the end of the list a new block
-                        new_item = {"id" : len(nodes),
+                        id = len(nodes)
+                        new_item = {"id" : id,
                                     "children" : [child["id"] for child in buffer],
                                     "level": level+1,
                                     "type": "n",
                                     "rectangle" : RTReeUtil.rectBoundingBox([bufferNode["rectangle"] for bufferNode in buffer])}
-                        nodes.append(new_item)
+                        
+                        nodes[id] = new_item
                         buffer = []
                         levelCount += 1
             else:                                       # Check for residuals
                 if (buffer and levelCount > 0) or (levelCount == 0 and len(buffer) > 1):
-                    new_item = {"id" : len(nodes),
+                    id = len(nodes)
+                    new_item = {"id" : id,
                                     "children" : [child["id"] for child in buffer],
                                     "level": level+1,
                                     "type": "n",
                                     "rectangle" : RTReeUtil.rectBoundingBox([bufferNode["rectangle"] for bufferNode in buffer])}
-                    nodes.append(new_item)
+                    nodes[id] = new_item
                     buffer = []
             level += 1
         
-        # FIXME remove
-        """
-                                                    # Let's iterate through the leaf blocks to make parent nodes!
-        buffer = []                                 # Buffer to temporarily encapsulate the node
-        for i, leaf in enumerate(nodes):       # Adding items to that buffer until it fills
-
-            buffer.append(leaf)
-            if len(buffer) == nodeCap:         # Let's add to the end of the list a new block
-                new_item = {"id" : len(nodes),
-                            "children" : [child["id"] for child in buffer],
-                            "level": buffer[0]["level"]+1,
-                            "type": "n",
-                            "rectangle" : RTReeUtil.rectBoundingBox([leafNode["rectangle"] for leafNode in buffer])}
-                nodes.append(new_item)
-                buffer = []
-        """
+        
+        nodes["root"]["id"], nodes["root"]["level"] = RTReeUtil.findRoot(nodes)
 
         return nodes

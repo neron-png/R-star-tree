@@ -143,3 +143,23 @@ def rectangleContains(r: list, p: list) -> bool:
             return False
         # print(f'{p[i]} >= {r[0][i]} and {p[i]} <= {r[1][i]}')
     return True
+
+
+###########
+# General #
+###########
+
+def findRoot(nodes: dict) -> (int, int):
+    maxlvl = 0
+    maxID = 0
+
+    for nodeID in list(nodes):
+        if nodes[nodeID]["level"] > maxlvl:
+            maxID = nodeID
+            maxlvl = nodes[nodeID]["level"]
+    
+    return maxID, maxlvl
+
+
+def intObjectHook(x):
+    return {int(k) if k.lstrip('-').isdigit() else k: v for k, v in x.items()}
