@@ -122,6 +122,6 @@ def write_blocks_to_datafile():
 
 
 def writeRtreeToFile(rtree):
-     with open(config.INDEXFILE, "w+") as indexFile:
+     with open(config.INDEXFILE, "w") as indexFile:
          json.dump(rtree, indexFile)
 

@@ -17,7 +17,7 @@ def parseDataJson():
         for i, item in enumerate(block["slots"]): 
             parsedItem =    {
                                 "bID": block["id"],
-                                "sIndex": i,
+                                "sIndex": item["id"],
                                 "coords": item["coords"]
                             }
             parsedSample.append( parsedItem )

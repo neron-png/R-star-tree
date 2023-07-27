@@ -42,7 +42,7 @@ def bottom_up(nodeCap: int, nodes: list, points) -> list:
         
         n = len(nodes)
         expansion_ration = nodeCap
-        expected_max_height = math.ceil(math.log( n*(expansion_ration-1)+1 ,expansion_ration))
+        expected_max_height = math.ceil(math.log( n*(expansion_ration-1)+1 ,expansion_ration)) + 1
         
         
         for level in range(expected_max_height):
@@ -63,7 +63,6 @@ def bottom_up(nodeCap: int, nodes: list, points) -> list:
                         buffer = []
                         levelCount += 1
             else:                                       # Check for residuals
-                                                        # FIXME last node might just have the one below
                 if (buffer and levelCount > 0) or (levelCount == 0 and len(buffer) > 1):
                     new_item = {"id" : len(nodes),
                                     "children" : [child["id"] for child in buffer],

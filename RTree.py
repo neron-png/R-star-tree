@@ -1,7 +1,7 @@
 import RTReeUtil
+from Record import Record
 import config
 import json
-from pprint import pprint  # FIXME debug
 import StorageHandler
 import Queries
 
@@ -36,21 +36,35 @@ class Rtree():
         from RTReeBulkload import bottom_up
         self.nodes = bottom_up(self.nodeCap, self.nodes, points)
 
+    
+    def insert(self, record: dict):
+        """
+        :param Record dict: {
+                            "bID": int,
+                            "sID": int,
+                            "coords": list [x, y, z...]
+                            }
+        :return: None, adds node to tree
+        """
+        from RTreeInsert import insert
+        self.nodes = insert(self.nodeCap, self.nodes, record)
+        
 
     def delete(self, id):
-        import deleteTemp
-        deleteTemp.delete(self.nodes, self.nodeCap, id)
+        import RTReeDelete
+        RTReeDelete.delete(self.nodes, self.nodeCap, id)
 
 
 
 
 def run():
 
-    # coords = decimalise(float_coords)
-    # parseData = RTReeUtil.parseDataJson()
+    parseData = RTReeUtil.parseDataJson()
     tempTree = Rtree(config.INDEXFILE)
+    # tempTree = Rtree()
     # print(tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
     # tempTree.bottom_up(parseData)
     # StorageHandler.writeRtreeToFile(tempTree.nodes)
+    tempTree.insert()
     # tempTree.delete(301073184)
     # StorageHandler.writeRtreeToFile(tempTree.nodes)
