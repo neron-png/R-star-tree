@@ -1,7 +1,32 @@
-
+import config
 ###########
 # Loading #
 ###########
+def parseDataJson():
+    """
+        Parsing the fully formatted Json into a list of coordinates and record IDs ready to be
+        parsed into the bottom up place.
+    """
+    sample = []
+    import json
+    with open(config.DATAFILE, "r") as f:
+        sample = json.load(f)
+
+    parsedSample = []
+    for block in sample:
+        for i, item in enumerate(block["slots"]): 
+            parsedItem =    {
+                                "bID": block["id"],
+                                "sIndex": i,
+                                "coords": item["coords"]
+                            }
+            parsedSample.append( parsedItem )
+
+    return parsedSample
+
+
+
+
 def zOrder(*pointCoords, maxBitLen = None) -> int:
     """Computes the z-order index from coordinates in n dimensions
 

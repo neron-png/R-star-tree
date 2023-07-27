@@ -1,6 +1,5 @@
 import RTReeUtil
 import config
-from RTReeUtil import zOrder
 import json
 from pprint import pprint  # FIXME debug
 import StorageHandler
@@ -22,8 +21,7 @@ class Rtree():
         if len(corners) != config.NUM_OF_COORDINATES:
             raise Exception("Provide the exact minumum amount of points for a " + str(config.NUM_OF_COORDINATES) + "-D rectangle.")
 
-        return Queries.rangeQuery(self, self.nodes[-1], [[int(corner[axis] * config.MANTISSA) for axis in range(len(corner))] for _, corner in enumerate(corners)]
-)
+        return Queries.rangeQuery(self, self.nodes[-1], [[int(corner[axis] * config.MANTISSA) for axis in range(len(corner))] for _, corner in enumerate(corners)])
 
     
     def bottom_up(self, points):
@@ -46,33 +44,10 @@ class Rtree():
 
 
 
-def parseDataJson():
-    """
-        Parsing the fully formatted Json into a list of coordinates and record IDs ready to be
-        parsed into the bottom up place.
-    """
-    sample = []
-    import json
-    with open(config.DATAFILE, "r") as f:
-        sample = json.load(f)
-
-    parsedSample = []
-    for block in sample:
-        for i, item in enumerate(block["slots"]): 
-            parsedItem =    {
-                                "bID": block["id"],
-                                "sIndex": i,
-                                "coords": item["coords"]
-                            }
-            parsedSample.append( parsedItem )
-
-    return parsedSample
-
-
 def run():
 
     # coords = decimalise(float_coords)
-    # parseData = parseDataJson()
+    # parseData = RTReeUtil.parseDataJson()
     tempTree = Rtree(config.INDEXFILE)
     # print(tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
     # tempTree.bottom_up(parseData)
