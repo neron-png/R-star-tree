@@ -18,12 +18,12 @@ class Rtree():
         nodes_ = {"root": {"id": 0, "level": 0},
                     1: {"id": 1, "level":0, "type": n, "rectangle" = []}...}
         """
-
+        #TODO: Update to nodes_
         if indexfile is not None:            
             with open(config.INDEXFILE, "r") as f:
                 self.nodes_ = self.nodes = json.load(f, object_hook=RTReeUtil.intObjectHook)
                 
-
+    #TODO: Update to nodes_
     def rangeQuery(self, corners: list) -> list:
         if len(corners) != config.NUM_OF_COORDINATES:
             raise Exception("Provide the exact minumum amount of points for a " + str(config.NUM_OF_COORDINATES) + "-D rectangle.")
@@ -44,6 +44,7 @@ class Rtree():
         self.nodes_ = bottom_up(self.nodeCap, self.nodes_, points)
 
     
+    #TODO: Update to nodes_
     def insert(self, record: dict):
         """
         :param Record dict: {
@@ -56,7 +57,7 @@ class Rtree():
         from RTreeInsert import insert
         self.nodes_ = insert(self.nodeCap, self.nodes_, record)
         
-
+    #TODO: Update to nodes_
     def delete(self, id):
         import RTReeDelete
         RTReeDelete.delete(self.nodes_, self.nodeCap, id)

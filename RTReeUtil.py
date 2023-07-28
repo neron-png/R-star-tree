@@ -137,9 +137,18 @@ def rectangleIntersection(r1: list, r2: list) -> bool:
     return True
 
 
-def rectangleContains(r: list, p: list) -> bool:
-    for i in range(len(r[0])):
-        if not ( p[i] >= r[0][i] and p[i] <= r[1][i] ):
+def rectangleContains(rectangle: list, point: list) -> bool:
+    """_summary_
+
+    Args:
+        rectangle (list): [[x1, y1, z1...], [x2, y2, z2...]]
+        point (list): [x, y, z...]
+
+    Returns:
+        bool: is the point in the rectangle?
+    """
+    for i in range(len(rectangle[0])):
+        if not ( point[i] >= rectangle[0][i] and point[i] <= rectangle[1][i] ):
             return False
         # print(f'{p[i]} >= {r[0][i]} and {p[i]} <= {r[1][i]}')
     return True
@@ -149,7 +158,7 @@ def rectangleContains(r: list, p: list) -> bool:
 # General #
 ###########
 
-def findRoot(nodes: dict) -> (int, int):
+def findRoot(nodes: dict) -> tuple:
     maxlvl = 0
     maxID = 0
 
@@ -163,3 +172,17 @@ def findRoot(nodes: dict) -> (int, int):
 
 def intObjectHook(x):
     return {int(k) if k.lstrip('-').isdigit() else k: v for k, v in x.items()}
+
+
+def rectBoundingBox(rectangles: list):
+    """_summary_
+
+    Args:
+        rectangles (list): list of rectangles [ [[x1, y1, z1...], [x2, y2, z2...]], [[xb, yb, zb...], [xb, yb, zb...]] ]
+    """
+    dimensions = len(rectangles[0][0])
+    
+    # bb = [min([r.get_min_coords() for r in rectangles]), max([r.get_max_coords() for r in rectangles])]
+    near_corner = [min([rectangle[0][i] for rectangle in rectangles]) for i in range(dimensions)]
+    far_corner = [max([rectangle[1][i] for rectangle in rectangles]) for i in range(dimensions)]
+    return [near_corner, far_corner]

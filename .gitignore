@@ -8,6 +8,7 @@ b.txt
 c
 storageHandler_old.py
 small_Data.json
+_rtree.pdf
 
 # C extensions
 *.so
