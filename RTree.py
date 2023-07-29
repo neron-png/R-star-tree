@@ -45,7 +45,7 @@ class Rtree():
 
     
     #TODO: Update to nodes_
-    def insert(self, record: dict):
+    def insert(self, record: dict|None):
         """
         :param Record dict: {
                             "bID": int,
@@ -55,7 +55,7 @@ class Rtree():
         :return: None, adds node to tree
         """
         from RTreeInsert import insert
-        self.nodes_ = insert(self.nodeCap, self.nodes_, record)
+        self.nodes_ = insert(self.nodeCap, self.nodes_, [413672865000, 261587581000])
         
     #TODO: Update to nodes_
     def delete(self, id):
@@ -73,6 +73,6 @@ def run():
     # print(tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
     tempTree.bottom_up(parseData)
     StorageHandler.writeRtreeToFile(tempTree.nodes_)
-    # tempTree.insert()
+    tempTree.insert(None)
     # tempTree.delete(301073184)
-    # StorageHandler.writeRtreeToFile(tempTree.nodes)
+    StorageHandler.writeRtreeToFile(tempTree.nodes_)

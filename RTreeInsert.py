@@ -1,7 +1,63 @@
 from Record import Record
-from RTReeUtil import rectangleContains
+from RTReeUtil import rectangleContains, overlap, rectAddPoint, min_i, rectangleArea
+import RTReeUtil
 
-def insert(nodeCap: int, nodes: dict, record: Record) -> dict:
+
+def chooseSubtree(nodes: dict, point: list) -> list:
+    
+    """ Choose subtree """
+    def recursiveChoose(N_ID):
+        
+        currentNode = nodes[N_ID]
+        
+        """ CS2 """
+        # IF
+        if currentNode["type"] == "l":
+            return currentNode["id"]
+        
+        # ELSE
+        else:
+            # IF this ID points to leaves, calculating overlap
+            if nodes[currentNode["children"][0]]["type"] == "l":
+                # Picking the child ID with the least overlap enlargement
+                childrenIDs = currentNode["children"]
+                childrenRectangles = [nodes[childID]["rectangle"] for childID in childrenIDs]
+                childrenOverlapEnlargements = []
+                for i, id in enumerate(childrenIDs):
+                    # Calculating initial overlap
+                    initialRectangle = childrenRectangles[i]
+                    initialOverlap = overlap(initialRectangle, childrenRectangles)
+
+                    # Calculating overlap after adding the point
+                    newRect = rectAddPoint(initialRectangle, point)
+                    newChildrenRectnangles = childrenRectangles[:i] + [newRect] + childrenRectangles[i+1:]
+                    newOverlap = overlap(newRect, newChildrenRectnangles)
+                    childrenOverlapEnlargements.append(newOverlap - initialOverlap)
+                
+                minimumChildRectangleIndex = min_i(childrenOverlapEnlargements)[1]
+                return [N_ID, recursiveChoose(childrenIDs[minimumChildRectangleIndex])]
+                
+            # ELSE this ID points to nodes, calculating enlargement
+            else:
+                childrenIDs = currentNode["children"]
+                childrenRectangles = [nodes[childID]["rectangle"] for childID in childrenIDs]
+                childrenAreaEnlargements = []
+                
+                for i, id in enumerate(childrenIDs):
+                    # Calculating initial areas
+                    oldArea = rectangleArea(childrenRectangles[i])
+                    newArea = rectangleArea(rectAddPoint(childrenRectangles[i], point))
+                    childrenAreaEnlargements.append(newArea - oldArea)
+                
+                minimumChildRectangleIndex = min_i(childrenAreaEnlargements)[1]
+                return [N_ID, recursiveChoose(childrenIDs[minimumChildRectangleIndex])]
+                
+    """ CS1 """    
+    return recursiveChoose(nodes["root"]["id"])
+
+
+# def insert(nodeCap: int, nodes: dict, record: Record) -> dict:
+def insert(nodeCap: int, nodes: dict, record: list) -> dict:
     """
     :param Record dict: {
                         "bID": int,
@@ -11,22 +67,8 @@ def insert(nodeCap: int, nodes: dict, record: Record) -> dict:
     :return: Nodes
     """
     
-    point = record.coords    
-    
-    """ Choose subtree """
-    def recursive_insert(pathOfIDs: list):
-        
-        item = nodes[pathOfIDs[-1]]
-        
-        if item["type"] == "l":            
-            pass
-        else:
-            for childID in item["children"]:
-                if rectangleContains(nodes[childID]["rectangle"], point):
-                    pass
-                    
-                    
-    recursive_insert([nodes["root"]["id"]])
-    
+    point = record #TODO update
+    tree = chooseSubtree(nodes, point)
+    print(tree)
     
     return nodes

@@ -1,3 +1,4 @@
+import math
 import config
 
 ###########
@@ -158,6 +159,18 @@ def rectangleContains(rectangle: list, point: list) -> bool:
 # General #
 ###########
 
+def min_i(iterable: list):
+    min_i = 0
+    min_e = iterable[0]
+    
+    for i, e in enumerate(iterable):
+        if e < min_e:
+            min_e = e
+            min_i = i
+    
+    return min_e, min_i
+
+
 def findRoot(nodes: dict) -> tuple:
     maxlvl = 0
     maxID = 0
@@ -173,16 +186,89 @@ def findRoot(nodes: dict) -> tuple:
 def intObjectHook(x):
     return {int(k) if k.lstrip('-').isdigit() else k: v for k, v in x.items()}
 
+"""
 
 def rectBoundingBox(rectangles: list):
+    \"\"\"_summary_
+
+    Args:
+        rectangles (list): list of rectangles [ [[x1, y1, z1...], [x2, y2, z2...]], [[xb, yb, zb...], [xb, yb, zb...]] ]
+    \"\"\"
+    dimensions = len(rectangles[0][0])
+    
+    near_corner = [min([rectangle[0][i] for rectangle in rectangles]) for i in range(dimensions)]
+    far_corner = [max([rectangle[1][i] for rectangle in rectangles]) for i in range(dimensions)]
+    return [near_corner, far_corner]
+"""
+
+def rectIntersection(rectangles: list) -> list:
     """_summary_
 
     Args:
         rectangles (list): list of rectangles [ [[x1, y1, z1...], [x2, y2, z2...]], [[xb, yb, zb...], [xb, yb, zb...]] ]
+
+    Returns:
+        Intersection of all the rectangles: [[x1, y2, zk], [x5, yk, z2]]
     """
-    dimensions = len(rectangles[0][0])
     
-    # bb = [min([r.get_min_coords() for r in rectangles]), max([r.get_max_coords() for r in rectangles])]
-    near_corner = [min([rectangle[0][i] for rectangle in rectangles]) for i in range(dimensions)]
-    far_corner = [max([rectangle[1][i] for rectangle in rectangles]) for i in range(dimensions)]
-    return [near_corner, far_corner]
+    if len(rectangles) < 2:
+        return rectangles[0]
+    intersection = rectangles[0]
+    
+    dimensions = len(intersection[0])
+    for rect in rectangles[1:]:
+        new_intersection = [[] for __ in range(2)]
+        
+        for dimension in range(dimensions):
+            min_val = max(intersection[0][dimension], rect[0][dimension])
+            max_val = min(intersection[1][dimension], rect[1][dimension])
+            if min_val > max_val:
+                return [None]  # No intersection
+            new_intersection[0].append(min_val)
+            new_intersection[1].append(max_val)
+        intersection = new_intersection
+
+    return intersection
+
+
+def rectAddPoint(rectangle: list, point: list):
+    """_summary_
+
+    Args:
+        rectangle (list): [[x1, y1, z1...], [x2, y2, z2...]]
+        point (list): [x, y, z...]
+
+    Returns:
+        _type_: _description_
+    """
+    return rectBoundingBox(rectangles=[rectangle, [point, point]])
+
+def rectangleArea(rectangle: list):
+    """_summary_
+
+    Args:
+        rectangle (list): [[x1, y1, z1...], [x2, y2, z2...]]
+    returns: Area: int
+    """
+    return math.prod( [rectangle[1][dimension] - rectangle[0][dimension] 
+                    for dimension in range(len(rectangle[0]))])
+
+
+def overlap(rectangle: list, nodeRectangles:list):
+    """_summary_
+
+    Args:
+        rectangle (list): [[x1, y1, z1...], [x2, y2, z2...]]
+        nodeRectangles (list): list of rectangles
+    """
+    myArea = rectangleArea(rectangle) # Need to exclude the rectangle's own area
+    areaSum = 0
+    for otherRectangle in nodeRectangles:
+        otherIntersect = rectIntersection([rectangle, otherRectangle])
+        if otherIntersect[0] is None:
+            continue
+        otherArea = rectangleArea(otherIntersect)
+        areaSum += otherArea
+    
+    return areaSum - myArea
+    
