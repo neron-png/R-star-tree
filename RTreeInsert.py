@@ -19,8 +19,13 @@ def chooseSubtree(nodes: dict, point: list) -> list:
         else:
             # IF this ID points to leaves, calculating overlap
             if nodes[currentNode["children"][0]]["type"] == "l":
+                
+                """ Reducing the overlap cost by sorting by area enlargement """
+                childrenNodes = [nodes[id] for id in currentNode["children"]]
+                childrenNodes.sort(key= lambda node: rectangleArea(rectAddPoint(node["rectangle"], point)) - rectangleArea(node["rectangle"]))
+                childrenIDs = [child["id"] for child in childrenNodes[:25]]
+                
                 # Picking the child ID with the least overlap enlargement
-                childrenIDs = currentNode["children"]
                 childrenRectangles = [nodes[childID]["rectangle"] for childID in childrenIDs]
                 childrenOverlapEnlargements = []
                 for i, id in enumerate(childrenIDs):
