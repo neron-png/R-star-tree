@@ -93,7 +93,8 @@ def write_blocks_to_datafile():
             try:
                 
                 # Parse raw-data element to Record object
-                t = Record(element)
+                t = Record()
+                t.setFromData(element)
                 
                 if current_block.occupied() < block_slots_limit:
                     

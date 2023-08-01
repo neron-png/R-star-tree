@@ -28,7 +28,7 @@ class Rtree():
         if len(corners) != config.NUM_OF_COORDINATES:
             raise Exception("Provide the exact minumum amount of points for a " + str(config.NUM_OF_COORDINATES) + "-D rectangle.")
 
-        return Queries.rangeQuery(self, self.nodes[-1], [[int(corner[axis] * config.MANTISSA) for axis in range(len(corner))] for _, corner in enumerate(corners)])
+        return Queries.rangeQuery(self, self.nodes_["root"], [[int(corner[axis] * config.MANTISSA) for axis in range(len(corner))] for _, corner in enumerate(corners)])
 
     
     def bottom_up(self, points):

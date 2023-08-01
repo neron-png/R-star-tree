@@ -4,7 +4,25 @@ import config
 
 class Record:
 
-    def __init__(self, data_element):
+    def __init__(self, **kargs):
+        
+        if len(kargs) == 0 :
+            self.id = -1
+            self.coords = []
+            self.name = ""
+            self._ = ""
+            
+            return
+        
+        else:        
+            self.id = kargs["id"]
+            self.coords = [int(c * config.MANTISSA) for c in kargs["coords"]]
+            self.name = kargs["name"]
+            self._ = ""
+
+            self.__correctSize__()
+
+    def setFromData(self, data_element):
 
         # Extract the needed data from the xml node attributes 
         # parsed in data_element parameter
@@ -24,12 +42,23 @@ class Record:
     
         # The '_' attribute is used to give each record (block slot) the same size;
         # so each block contains the same number of slots (filled with records)
+        self._ = ""
+
+        self.__correctSize__()
+
+
+    def __size__(self):
+        return len(self.to_json())        
+
+    def __str__(self):
+        return f'id:{self.id}\nname:{self.name}\ncoordinates:{[c / config.MANTISSA for c in self.coords]}'
+
+    def __correctSize__(self):
 
         # If the record is smaller than the fixed slot size, '_' fills with dump '0's
-        self._ = ""
         while self.__size__() < config.RECORDSIZE:
             self._ += "0"
-
+        
         # If the record is bigger than the fixed slot size, the name attribute gets cut
         while self.__size__() > config.RECORDSIZE and len(self.name) > 0:
             self.name = self.name[:-1]
@@ -40,13 +69,7 @@ class Record:
 
             # If the name attribute (or any other) exceeds the size limit, abort record
             if self.__size__() > config.RECORDSIZE:
-                raise Exception("Record (node) " + self.id + " exceeds the slot size limit")
-        
-    def __size__(self):
-        return len(self.to_json())        
-
-    def __str__(self):
-        return f'id:{self.id}\nname:{self.name}\ncoordinates:{[c / config.MANTISSA for c in self.coords]}'
+                raise Exception("Record (node) " + str(self.id) + " exceeds the slot size limit")
 
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__, indent=None, separators= (',', ':')).encode('utf-8')

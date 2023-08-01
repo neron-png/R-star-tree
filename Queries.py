@@ -1,8 +1,7 @@
 import RTReeUtil as util
-import RTree
+from RTree import Rtree
 
-
-def rangeQuery(rtree: RTree, rootNode: list, range: list) -> list:
+def rangeQuery(rtree: Rtree, rootNode: dict, range: list) -> list:
     intersections = []
     result = []
     
