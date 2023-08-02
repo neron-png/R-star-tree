@@ -1,6 +1,7 @@
 from Record import Record
 from RTReeUtil import rectangleContains, overlap, rectAddPoint, min_i, rectangleArea
 import RTReeUtil
+import config
 
 
 def chooseSubtree(nodes: dict, point: list) -> list:
@@ -23,7 +24,7 @@ def chooseSubtree(nodes: dict, point: list) -> list:
                 """ Reducing the overlap cost by sorting by area enlargement """
                 childrenNodes = [nodes[id] for id in currentNode["children"]]
                 childrenNodes.sort(key= lambda node: rectangleArea(rectAddPoint(node["rectangle"], point)) - rectangleArea(node["rectangle"]))
-                childrenIDs = [child["id"] for child in childrenNodes[:25]]
+                childrenIDs = [child["id"] for child in childrenNodes[:config.P]]
                 
                 # Picking the child ID with the least overlap enlargement
                 childrenRectangles = [nodes[childID]["rectangle"] for childID in childrenIDs]
