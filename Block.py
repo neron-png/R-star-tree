@@ -15,7 +15,7 @@ class Block:
         
     def append(self, record: Record):
         self.slots.append(record)
-
+        
     def occupied(self) -> int:
         return len(self.slots)
 

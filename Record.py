@@ -11,7 +11,6 @@ class Record:
             self.coords = []
             self.name = ""
             self._ = ""
-            
             return
         
         else:        
@@ -19,7 +18,6 @@ class Record:
             self.coords = [int(c * config.MANTISSA) for c in kargs["coords"]]
             self.name = kargs["name"]
             self._ = ""
-
             self.__correctSize__()
 
     def setFromData(self, data_element):

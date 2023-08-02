@@ -14,7 +14,6 @@ def searchByID(id):
     """
     item = None
 
-
     flag = False
     for i in itertools.count(start=1):
         if flag:
@@ -140,11 +139,20 @@ def writeRecordToDisk(r: Record) -> int:
 
     # Iterate through blocks of datafile and try to find a
     # block with empty slots to put there the record (r)
-    for block in data:
+    for i, block in enumerate(data):
         if len(block["slots"]) >= block_slots_limit:
             continue
         else:
-            block["slots"].append(r)
+            # Create a copy of the selected block
+            # where the record will be appended
+            tempBlock = Block(block["id"])
+            tempBlock.slots.extend(block["slots"])
+            tempBlock.slots.append(r)
+            tempBlock.fill_dump(1 if i == 0 else 0)
+            
+            block["slots"] = tempBlock.slots
+            block["_"] = tempBlock._
+
             bId = block["id"]
             placed = True
             break
@@ -152,14 +160,18 @@ def writeRecordToDisk(r: Record) -> int:
     # If the record (r) does not fit in any existing block
     # create a new block and append it there
     if not placed:
-        bId = data[-1]["id"] + 1
+        if len(data) > 0:
+            bId = data[-1]["id"] + 1
+        else:
+            bId = 1
+        
         newBlock = Block(bId)
         newBlock.append(r)
-        newBlock.fill_dump(0)
+        newBlock.fill_dump(1 if bId == 1 else 0)
         data.append(newBlock)
 
     with open(config.DATAFILE, 'w', encoding='utf-8') as file:
-        file.write(json.dumps(data, default=lambda o: o.__dict__, indent=None, separators= (',', ':')))
+        file.write(json.dumps(data, default=lambda o: o.__dict__, indent=None, separators=(',', ':')))
     
     # Return the block's id where the record (r) was appended
     return bId
