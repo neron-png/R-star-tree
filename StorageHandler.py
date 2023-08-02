@@ -175,3 +175,35 @@ def writeRecordToDisk(r: Record) -> int:
     
     # Return the block's id where the record (r) was appended
     return bId
+
+
+def deleteRecordFromDisk(bId: int, sId: int) -> bool:
+    # Fetch datafile to get a list of blocks as python dict
+    with open(config.DATAFILE, 'r') as file:
+        data = json.load(file)
+    
+    result = False
+
+    # Iterate through blocks of datafile and try to find 
+    # the block that contains the requested record (slot)
+    for j, block in enumerate(data):
+
+        if block["id"] == bId:
+
+            for i, slot in enumerate(block["slots"]):
+                if slot["id"] == sId:
+                    block["slots"].pop(i)
+                    result = True
+        
+                    # Create a copy of the selected block to set the correct resizement
+                    tempBlock = Block(bId)
+                    tempBlock.slots.extend(block["slots"])
+                    tempBlock.fill_dump(1 if j == 0 else 0)
+                    
+                    block["_"] = tempBlock._
+                    
+                    with open(config.DATAFILE, 'w', encoding='utf-8') as file:
+                        file.write(json.dumps(data, default=lambda o: o.__dict__, indent=None, separators=(',', ':')))
+                    
+                    break
+    return result
