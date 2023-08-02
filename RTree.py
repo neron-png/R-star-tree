@@ -70,6 +70,10 @@ def run():
     parseData = RTReeUtil.parseDataJson()
     # tempTree = Rtree(config.INDEXFILE)
     tempTree = Rtree()
+    
+    r = Record(id=32, coords=[1,2], name="Greece")
+    StorageHandler.writeRecordToDisk(r)
+
     # print(tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
     tempTree.bottom_up(parseData)
     StorageHandler.writeRtreeToFile(tempTree.nodes_)

@@ -20,7 +20,7 @@ class Block:
         return len(self.slots)
 
     def fill_dump(self, f: int=0):
-        while self.__size__() < config.BLOCKSIZE - 2 - f:
+        while self.__size__() < config.BLOCKSIZE - 1 - f:
             self._ += '0'
 
     def __size__(self):

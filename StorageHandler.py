@@ -106,7 +106,7 @@ def write_blocks_to_datafile():
                     # Fill it with dump '0's and write it in datafile 
                     current_block.fill_dump(1 if i == 0 else 0)
                     datafile.write(current_block.to_json())
-                    datafile.write(bytes(",\n", 'utf-8'))
+                    datafile.write(bytes(",", 'utf-8'))
 
                     # Create a new block and store the parsing record there
                     block_index += 1
@@ -118,7 +118,7 @@ def write_blocks_to_datafile():
                     log.write(str(datetime.now()) + ": " + E.args[0] + "\n")
         
         # Create json object list closing
-        datafile.seek(datafile.tell() - 2)
+        datafile.seek(datafile.tell() - 1)
         datafile.write(bytes("]", 'utf-8'))
 
 
@@ -126,3 +126,40 @@ def writeRtreeToFile(rtree):
      with open(config.INDEXFILE, "w") as indexFile:
          json.dump(rtree, indexFile)
 
+
+def writeRecordToDisk(r: Record) -> int:
+    # Fetch datafile to get a list of blocks as python dict
+    with open(config.DATAFILE, 'r') as file:
+        data = json.load(file)
+
+    # Compute how many slots/records can a block host
+    block_slots_limit = config.BLOCKSIZE // config.RECORDSIZE - 1
+    
+    placed = False
+    bId = -1
+
+    # Iterate through blocks of datafile and try to find a
+    # block with empty slots to put there the record (r)
+    for block in data:
+        if len(block["slots"]) >= block_slots_limit:
+            continue
+        else:
+            block["slots"].append(r)
+            bId = block["id"]
+            placed = True
+            break
+    
+    # If the record (r) does not fit in any existing block
+    # create a new block and append it there
+    if not placed:
+        bId = data[-1]["id"] + 1
+        newBlock = Block(bId)
+        newBlock.append(r)
+        newBlock.fill_dump(0)
+        data.append(newBlock)
+
+    with open(config.DATAFILE, 'w', encoding='utf-8') as file:
+        file.write(json.dumps(data, default=lambda o: o.__dict__, indent=None, separators= (',', ':')))
+    
+    # Return the block's id where the record (r) was appended
+    return bId
