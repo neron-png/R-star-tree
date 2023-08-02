@@ -6,6 +6,7 @@ ENTRYSIZE = 256
 INPUTFILE = "map.osm"
 DATAFILE = "data.json"
 INDEXFILE = "index.json"
+P = 32 # Page 4 in paper, optimizing for large blocks when calculating overlap
 
 
 COORDINATE_TAGS = ["lat", "lon"]
