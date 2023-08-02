@@ -28,7 +28,7 @@ class Rtree():
         if len(corners) != config.NUM_OF_COORDINATES:
             raise Exception("Provide the exact minumum amount of points for a " + str(config.NUM_OF_COORDINATES) + "-D rectangle.")
 
-        return Queries.rangeQuery(self, self.nodes_["root"], [[int(corner[axis] * config.MANTISSA) for axis in range(len(corner))] for _, corner in enumerate(corners)])
+        return Queries.rangeQuery(self.nodes_, self.nodes_["root"]["id"], [[int(corner[axis] * config.MANTISSA) for axis in range(len(corner))] for _, corner in enumerate(corners)])
 
     
     def bottom_up(self, points):
@@ -75,7 +75,7 @@ def run():
     # StorageHandler.writeRecordToDisk(r)
     # StorageHandler.deleteRecordFromDisk(2781,32)
 
-    # print(tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
+    print(tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
     tempTree.bottom_up(parseData)
     StorageHandler.writeRtreeToFile(tempTree.nodes_)
     tempTree.insert(None)

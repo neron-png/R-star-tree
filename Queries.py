@@ -1,23 +1,25 @@
 import RTReeUtil as util
 
-def rangeQuery(rtree, rootNode: dict, range: list) -> list:
+def rangeQuery(nodes:dict, nodeId: int, range: list) -> list:
     intersections = []
     result = []
     
-    if rootNode["type"] == "n":
-        if util.rectangleIntersection(rootNode["rectangle"], range):
-            for child in rootNode["children"]:
-                if util.rectangleIntersection(rtree.nodes[child]["rectangle"], range):
+    node = nodes[nodeId]
+
+    if node["type"] == "n":
+        if util.rectangleIntersection(node["rectangle"], range):
+            for child in node["children"]:
+                if util.rectangleIntersection(nodes[child]["rectangle"], range):
                     intersections.append(child)
 
             for i in intersections:
-                result.extend(rangeQuery(rtree, rtree.nodes[i], range))
+                result.extend(rangeQuery(nodes, i, range))
             
             return result 
         else:
             return []
     else:
-        for point in rootNode["records"]:
+        for point in node["records"]:
             if util.rectangleContains(range, point["coords"]):
                 result.append(point)
         return result
