@@ -75,8 +75,8 @@ def run():
     # StorageHandler.writeRecordToDisk(r)
     # StorageHandler.deleteRecordFromDisk(2781,32)
 
-    print(tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
     tempTree.bottom_up(parseData)
+    print(tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
     StorageHandler.writeRtreeToFile(tempTree.nodes_)
     tempTree.insert(None)
     # tempTree.delete(301073184)
