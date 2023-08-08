@@ -6,6 +6,7 @@ ENTRYSIZE = 256
 INPUTFILE = "map.osm"
 DATAFILE = "data.json"
 INDEXFILE = "index.json"
+m = 0.4 # Minimum Fill Ratio #TODO #FIXME update Bulkload to accomodate this
 P = 32 # Page 4 in paper, optimizing for large blocks when calculating overlap
 
 

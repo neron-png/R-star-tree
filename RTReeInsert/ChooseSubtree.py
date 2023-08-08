@@ -4,6 +4,20 @@ import RTReeUtil
 import config
 
 
+def flatten(subtree) -> list:
+    """
+    input: subtree: [2784, [2781, [2772, [2739, [2608, [2086, 0]]]]]]
+    returns: subtree: [2784, 2781, 2772, 2739, 2608, 2086, 0]
+    """
+    if not isinstance(subtree[1], list):
+        return subtree
+    else:
+        newtree = [subtree[0]]
+        newtree.extend(flatten(subtree[1]))
+        return newtree
+    
+
+
 def chooseSubtree(nodes: dict, point: list) -> list:
     
     """ Choose subtree """
@@ -60,21 +74,3 @@ def chooseSubtree(nodes: dict, point: list) -> list:
                 
     """ CS1 """    
     return recursiveChoose(nodes["root"]["id"])
-
-
-# def insert(nodeCap: int, nodes: dict, record: Record) -> dict:
-def insert(nodeCap: int, nodes: dict, record: list) -> dict:
-    """
-    :param Record dict: {
-                        "bID": int,
-                        "sID": int,
-                        "coords": list [x, y, z...]
-                        }
-    :return: Nodes
-    """
-    
-    point = record #TODO update
-    tree = chooseSubtree(nodes, point)
-    print(tree)
-    
-    return nodes

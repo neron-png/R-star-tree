@@ -13,6 +13,7 @@ class Rtree():
         self.nodeCap: int = config.BLOCKSIZE // config.ENTRYSIZE
         self.nodes = []
         self.nodes_ = {"root": {"id": 0, "level": 0}}
+        self.m = int(config.m*self.nodeCap)
         """
         nodes = [{"id": 1, "level":0, "type": n, "rectangle" = []}, ...]
         nodes_ = {"root": {"id": 0, "level": 0},
@@ -44,7 +45,6 @@ class Rtree():
         self.nodes_ = bottom_up(self.nodeCap, self.nodes_, points)
 
     
-    #TODO: Update to nodes_
     def insert(self, record: dict|None):
         """
         :param Record dict: {
@@ -54,8 +54,8 @@ class Rtree():
                             }
         :return: None, adds node to tree
         """
-        from RTreeInsert import insert
-        self.nodes_ = insert(self.nodeCap, self.nodes_, [413672865000, 261587581000])
+        from RTReeInsert.Insert import insert
+        self.nodes_ = insert(nodeCap=self.nodeCap, m=self.m, nodes=self.nodes_, record=[413672865000, 261587581000])
         
     #TODO: Update to nodes_
     def delete(self, id):
@@ -76,8 +76,8 @@ def run():
     # StorageHandler.deleteRecordFromDisk(2781,32)
 
     tempTree.bottom_up(parseData)
-    print(tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
-    StorageHandler.writeRtreeToFile(tempTree.nodes_)
+    # print(tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
+    # StorageHandler.writeRtreeToFile(tempTree.nodes_)
     tempTree.insert(None)
     # tempTree.delete(301073184)
     StorageHandler.writeRtreeToFile(tempTree.nodes_)

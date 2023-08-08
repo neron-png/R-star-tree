@@ -88,13 +88,15 @@ def leafBoundingRect(leaf_coordinates):
     return [low_corner, high_corner]
 
 def rectBoundingBox(rectangles):
+    import copy
     """
 
     :param rectangles: [[[x, y,...n], [x', y',...n']], [[x1, y1,...n1], [x1', y1',...n1']]]
     :return: minimum bouding rectangle [[x, y,...n], [x', y',...n']]
     """
-    rect = rectangles[0].copy()
-    for rectangle in rectangles:
+    newRectangles = copy.deepcopy(rectangles)
+    rect = newRectangles[0]
+    for rectangle in newRectangles:
         for i in range(2):
             for j, coordinate in enumerate(rectangle[i]):
                 if i == 0:
@@ -271,4 +273,20 @@ def overlap(rectangle: list, nodeRectangles:list):
         areaSum += otherArea
     
     return areaSum - myArea
+
+##########
+# INSERT #
+##########
+
+def margin(rectangle: list) -> int:
+    """ Sum of the lengths of the edges of a rectangle
+        aka Perimeter :()
+
+        parameter: rectangle = [[x1, y1, z1...], [x2, y2, z2...]]
+    """
+
+    margin = 0
+    for axis in range(len(rectangle[0])):
+        margin += rectangle[1][axis] - rectangle[0][axis]
     
+    return margin
