@@ -52,7 +52,7 @@ def getBlockFromDisk(blockID):
 def writeBlockToDisk(blockID, block):
     contents = json.dumps(block)
     if blockID == 0 :
-        "[" + block
+        pass # "[" + block
         #TODO padd to match the blocksize
 
     with open(config.DATAFILE, 'w', encoding='utf-8') as datafile:
@@ -175,6 +175,22 @@ def writeRecordToDisk(r: Record) -> int:
     
     # Return the block's id where the record (r) was appended
     return bId
+
+
+def fetchRecordFromDisk(bId: int, sId: int) -> dict:
+    # Fetch datafile to get a list of blocks as python dict
+    with open(config.DATAFILE, 'r') as file:
+        data = json.load(file)
+    
+    # Iterate through blocks of datafile and try to find 
+    # the block that contains the requested record (slot)
+    for j, block in enumerate(data):
+        if block["id"] == bId:
+            for i, slot in enumerate(block["slots"]):
+                if slot["id"] == sId:
+                    return slot
+    
+    return {}
 
 
 def deleteRecordFromDisk(bId: int, sId: int) -> bool:
