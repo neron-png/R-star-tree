@@ -19,17 +19,27 @@ class Rtree():
         nodes_ = {"root": {"id": 0, "level": 0},
                     1: {"id": 1, "level":0, "type": n, "rectangle" = []}...}
         """
-        #TODO: Update to nodes_
         if indexfile is not None:            
             with open(config.INDEXFILE, "r") as f:
-                self.nodes_ = self.nodes = json.load(f, object_hook=RTReeUtil.intObjectHook)
+                self.nodes_ = json.load(f, object_hook=RTReeUtil.intObjectHook)
                 
-    #TODO: Update to nodes_
     def rangeQuery(self, corners: list) -> list:
         if len(corners) != config.NUM_OF_COORDINATES:
             raise Exception("Provide the exact minumum amount of points for a " + str(config.NUM_OF_COORDINATES) + "-D rectangle.")
 
-        return Queries.rangeQuery(self.nodes_, self.nodes_["root"]["id"], [[int(corner[axis] * config.MANTISSA) for axis in range(len(corner))] for _, corner in enumerate(corners)])
+        # Get the list of pointers in datafile for the points corresponding to the range query
+        result = Queries.rangeQuery(self.nodes_, self.nodes_["root"]["id"], [[int(corner[axis] * config.MANTISSA) for axis in range(len(corner))] for _, corner in enumerate(corners)])
+        
+        records = []
+
+        # For each datafile-pointet, fetch the actual record
+        for pointer in result:
+            record = StorageHandler.fetchRecordFromDisk(pointer["bID"], pointer["sIndex"])
+            record.pop("_")
+            record["coords"] = [c / config.MANTISSA for c in record["coords"]]
+            records.append(record)
+        
+        return records
 
     
     def bottom_up(self, points):
@@ -77,7 +87,7 @@ def run():
 
     tempTree.bottom_up(parseData)
     # print(tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
-    # StorageHandler.writeRtreeToFile(tempTree.nodes_)
+    # # StorageHandler.writeRtreeToFile(tempTree.nodes_)
     tempTree.insert(None)
     # tempTree.delete(301073184)
-    StorageHandler.writeRtreeToFile(tempTree.nodes_)
+    # StorageHandler.writeRtreeToFile(tempTree.nodes_)
