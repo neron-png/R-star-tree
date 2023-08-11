@@ -83,5 +83,9 @@ def findSplit(nodeCap: int, m: int, nodes: dict, splitNodeID: int):
         else:
             overlapValue[slit] = 0
         
-    splitIndex = min(overlapValue.items(), key=lambda item: item[1])[0]
-    return minAxis, splitIndex
+    splitIndex = min(list(overlapValue.items()), key=lambda item: item[1])[0]
+
+    return [item["id"] for item in childrenEntries[:splitIndex]], [item["id"] for item in childrenEntries[splitIndex:]]
+
+
+    

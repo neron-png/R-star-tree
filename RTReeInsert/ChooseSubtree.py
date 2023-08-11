@@ -1,8 +1,8 @@
 from Record import Record
-from RTReeUtil import rectangleContains, overlap, rectAddPoint, min_i, rectangleArea
+from RTReeUtil import rectangleContains, overlap, rectAddPoint, min_i, rectangleArea, rectBoundingBox
 import RTReeUtil
 import config
-
+from copy import deepcopy
 
 def flatten(subtree) -> list:
     """
@@ -18,7 +18,7 @@ def flatten(subtree) -> list:
     
 
 
-def chooseSubtree(nodes: dict, point: list) -> list:
+def chooseSubtree(nodes: dict, rect: list, level: int) -> list:
     
     """ Choose subtree """
     def recursiveChoose(N_ID):
@@ -27,7 +27,7 @@ def chooseSubtree(nodes: dict, point: list) -> list:
         
         """ CS2 """
         # IF
-        if currentNode["type"] == "l":
+        if currentNode["type"] == "l" or currentNode["level"] == level:
             return currentNode["id"]
         
         # ELSE
@@ -37,11 +37,11 @@ def chooseSubtree(nodes: dict, point: list) -> list:
                 
                 """ Reducing the overlap cost by sorting by area enlargement """
                 childrenNodes = [nodes[id] for id in currentNode["children"]]
-                childrenNodes.sort(key= lambda node: rectangleArea(rectAddPoint(node["rectangle"], point)) - rectangleArea(node["rectangle"]))
+                childrenNodes.sort(key= lambda node: rectangleArea(rectBoundingBox([deepcopy(node["rectangle"]), rect])) - rectangleArea(node["rectangle"]))
                 childrenIDs = [child["id"] for child in childrenNodes[:config.P]]
                 
                 # Picking the child ID with the least overlap enlargement
-                childrenRectangles = [nodes[childID]["rectangle"] for childID in childrenIDs]
+                childrenRectangles = deepcopy([nodes[childID]["rectangle"] for childID in childrenIDs])
                 childrenOverlapEnlargements = []
                 for i, id in enumerate(childrenIDs):
                     # Calculating initial overlap
@@ -49,7 +49,7 @@ def chooseSubtree(nodes: dict, point: list) -> list:
                     initialOverlap = overlap(initialRectangle, childrenRectangles)
 
                     # Calculating overlap after adding the point
-                    newRect = rectAddPoint(initialRectangle, point)
+                    newRect = rectBoundingBox([initialRectangle, rect])
                     newChildrenRectnangles = childrenRectangles[:i] + [newRect] + childrenRectangles[i+1:]
                     newOverlap = overlap(newRect, newChildrenRectnangles)
                     childrenOverlapEnlargements.append(newOverlap - initialOverlap)
@@ -60,13 +60,13 @@ def chooseSubtree(nodes: dict, point: list) -> list:
             # ELSE this ID points to nodes, calculating enlargement
             else:
                 childrenIDs = currentNode["children"]
-                childrenRectangles = [nodes[childID]["rectangle"] for childID in childrenIDs]
+                childrenRectangles = deepcopy([nodes[childID]["rectangle"] for childID in childrenIDs])
                 childrenAreaEnlargements = []
                 
                 for i, id in enumerate(childrenIDs):
                     # Calculating initial areas
                     oldArea = rectangleArea(childrenRectangles[i])
-                    newArea = rectangleArea(rectAddPoint(childrenRectangles[i], point))
+                    newArea = rectangleArea(rectBoundingBox([childrenRectangles[i], rect]))
                     childrenAreaEnlargements.append(newArea - oldArea)
                 
                 minimumChildRectangleIndex = min_i(childrenAreaEnlargements)[1]
@@ -74,3 +74,13 @@ def chooseSubtree(nodes: dict, point: list) -> list:
                 
     """ CS1 """    
     return recursiveChoose(nodes["root"]["id"])
+
+
+def chooseSubtreeLeaf(nodes: dict, point: list) -> list:
+    """
+    point: list - [x, y, z]
+    """
+
+    #Convert the point to a point-sized rectangle
+    rect = [deepcopy(point), deepcopy(point)]
+    return chooseSubtree(nodes = nodes, level= 0, rect=rect)

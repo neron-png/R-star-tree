@@ -64,8 +64,8 @@ class Rtree():
                             }
         :return: None, adds node to tree
         """
-        from RTReeInsert.Insert import insert
-        self.nodes_ = insert(nodeCap=self.nodeCap, m=self.m, nodes=self.nodes_, record=[413672865000, 261587581000])
+        from RTReeInsert.Insert import insertData
+        self.nodes_ = insertData(nodeCap=self.nodeCap, m=self.m, nodes=self.nodes_, record={"coords": [413672865000, 261587581000], "name":"Cousgo"})
         
     #TODO: Update to nodes_
     def delete(self, id):
