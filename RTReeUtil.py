@@ -55,7 +55,7 @@ def zOrder(*pointCoords, maxBitLen = None) -> int:
     """
     n = len(pointCoords)
     z = 0
-    maxBitLen = max([coord.bit_length() for coord in pointCoords])*n
+    maxBitLen = int(max([coord.bit_length() for coord in pointCoords]))*n
     # maxBitLen = sum([coord.bit_length() for coord in pointCoords])
 
     for i in range(0, maxBitLen // n):
@@ -290,3 +290,56 @@ def margin(rectangle: list) -> int:
         margin += rectangle[1][axis] - rectangle[0][axis]
     
     return margin
+
+
+class MinHeapElement:
+    def __init__(self, node: dict):
+        self.node = node
+        if node["type"] == "n":
+            self.type = "rectangle"
+            self.l1 = sum(node["rectangle"][0])
+        else:
+            self.type = "point"
+            self.l1 = sum(node["coords"])
+
+class MinHeap:
+    def __init__(self):
+        self.heap = []
+
+    def push(self, node):
+        item = MinHeapElement(node)
+        self.heap.append(item)
+        self._heapify_up(len(self.heap) - 1)
+
+    def pop(self):
+        if not self.heap:
+            return None
+
+        if len(self.heap) == 1:
+            return self.heap.pop()
+
+        root = self.heap[0]
+        self.heap[0] = self.heap.pop()
+        self._heapify_down(0)
+        return root
+
+    def _heapify_up(self, index):
+        parent_idx = (index - 1) // 2
+        while index > 0 and self.heap[index].l1 < self.heap[parent_idx].l1:
+            self.heap[index], self.heap[parent_idx] = self.heap[parent_idx], self.heap[index]
+            index = parent_idx
+            parent_idx = (index - 1) // 2
+
+    def _heapify_down(self, index):
+        left_child_idx = 2 * index + 1
+        right_child_idx = 2 * index + 2
+        smallest = index
+
+        if left_child_idx < len(self.heap) and self.heap[left_child_idx].l1 < self.heap[smallest].l1:
+            smallest = left_child_idx
+        if right_child_idx < len(self.heap) and self.heap[right_child_idx].l1 < self.heap[smallest].l1:
+            smallest = right_child_idx
+
+        if smallest != index:
+            self.heap[index], self.heap[smallest] = self.heap[smallest], self.heap[index]
+            self._heapify_down(smallest)

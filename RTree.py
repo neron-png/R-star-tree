@@ -24,6 +24,11 @@ class Rtree():
                 self.nodes_ = json.load(f, object_hook=RTReeUtil.intObjectHook)
                 
     def rangeQuery(self, corners: list) -> list:
+        """
+        :param corners: ist of (n-1)-d rectangle's corners (floats)
+        :return: list of records (points) included in the rectangle 
+        """
+
         if len(corners) != config.NUM_OF_COORDINATES:
             raise Exception("Provide the exact minumum amount of points for a " + str(config.NUM_OF_COORDINATES) + "-D rectangle.")
 
@@ -32,7 +37,7 @@ class Rtree():
         
         records = []
 
-        # For each datafile-pointet, fetch the actual record
+        # For each datafile-point, fetch the actual record
         for pointer in result:
             record = StorageHandler.fetchRecordFromDisk(pointer["bID"], pointer["sIndex"])
             record.pop("_")
@@ -40,6 +45,9 @@ class Rtree():
             records.append(record)
         
         return records
+    
+    def skylineQuery(self) -> list:
+        return []
 
     
     def bottom_up(self, points):
