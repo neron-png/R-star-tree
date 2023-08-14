@@ -55,7 +55,7 @@ def zOrder(*pointCoords, maxBitLen = None) -> int:
     """
     n = len(pointCoords)
     z = 0
-    maxBitLen = int(max([coord.bit_length() for coord in pointCoords]))*n
+    maxBitLen = max([int(coord).bit_length() for coord in pointCoords])*n
     # maxBitLen = sum([coord.bit_length() for coord in pointCoords])
 
     for i in range(0, maxBitLen // n):
