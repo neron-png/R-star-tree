@@ -11,8 +11,7 @@ class Rtree():
 
     def __init__(self, indexfile=None):
         self.nodeCap: int = config.BLOCKSIZE // config.ENTRYSIZE
-        self.nodes = []
-        self.nodes_ = {"root": {"id": 0, "level": 0}}
+        self.nodes = {"root": {"id": 0, "level": 0}}
         self.m = int(config.m*self.nodeCap)
         """
         nodes = [{"id": 1, "level":0, "type": n, "rectangle" = []}, ...]
@@ -21,7 +20,7 @@ class Rtree():
         """
         if indexfile is not None:            
             with open(config.INDEXFILE, "r") as f:
-                self.nodes_ = json.load(f, object_hook=RTReeUtil.intObjectHook)
+                self.nodes = json.load(f, object_hook=RTReeUtil.intObjectHook)
                 
     def rangeQuery(self, corners: list) -> list:
         """
@@ -33,7 +32,7 @@ class Rtree():
             raise Exception("Provide the exact minumum amount of points for a " + str(config.NUM_OF_COORDINATES) + "-D rectangle.")
 
         # Get the list of pointers in datafile for the points corresponding to the range query
-        result = Queries.rangeQuery(self.nodes_, self.nodes_["root"]["id"], [[int(corner[axis] * config.MANTISSA) for axis in range(len(corner))] for _, corner in enumerate(corners)])
+        result = Queries.rangeQuery(self.nodes, self.nodes["root"]["id"], [[int(corner[axis] * config.MANTISSA) for axis in range(len(corner))] for _, corner in enumerate(corners)])
         
         records = []
 
@@ -60,7 +59,7 @@ class Rtree():
         :return: None, fills up the self.nodes as a flat list
         """
         from RTReeBulkload import bottom_up
-        self.nodes_ = bottom_up(self.nodeCap, self.nodes_, points)
+        self.nodes = bottom_up(self.nodeCap, self.nodes, points)
 
     
     def insert(self, record: dict|None):
@@ -73,12 +72,12 @@ class Rtree():
         :return: None, adds node to tree
         """
         from RTReeInsert.Insert import insertData
-        self.nodes_ = insertData(nodeCap=self.nodeCap, m=self.m, nodes=self.nodes_, record={"coords": [413672865000, 261587581000], "name":"Cousgo"})
+        self.nodes = insertData(nodeCap=self.nodeCap, m=self.m, nodes=self.nodes, record={"coords": [413672865000, 261587581000], "name":"Cousgo"})
         
     #TODO: Update to nodes_
     def delete(self, id):
         import RTReeDelete
-        RTReeDelete.delete(self.nodes_, self.nodeCap, id)
+        RTReeDelete.delete(self.nodes, self.nodeCap, id)
 
 
 
@@ -98,4 +97,4 @@ def run():
     # # StorageHandler.writeRtreeToFile(tempTree.nodes_)
     tempTree.insert(None)
     # tempTree.delete(301073184)
-    StorageHandler.writeRtreeToFile(tempTree.nodes_)
+    StorageHandler.writeRtreeToFile(tempTree.nodes)
