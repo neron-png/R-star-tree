@@ -77,9 +77,40 @@ def overflowTreatment(nodes: dict, nodeCap: int, level: int, m:int, overflownID:
     
     """ OT1: if level is not the root level and this is the first Overflow Treatment for this level """
     if config.OVERFLOWTREATMENT[level] == 0 and not nodes[nodes["root"]["id"]]["level"] == level:
+        REINSERT_P = int(nodeCap*config.SPLIT_P)
+        config.OVERFLOWTREATMENT[level] += 1
+        #Check if the node is a leaf node or not
+        if nodes[overflownID]["type"] == "l":
+            
+            """ RI1/2 For all M+1 sort based on descending distance to center of parent rectangle """
+            nodes[overflownID]["records"] = sorted(nodes[overflownID]["records"], key=lambda point: RTReeUtil.calcPointToRect(point["coords"], nodes[overflownID]["rectangle"]), reverse=True)  
 
-        """ REINSERT """
-        """ TODO """
+            """ RI3 Remove the first p entries from the parent and readjust rectangle """
+            
+            removed_entries = copy.deepcopy(nodes[overflownID]["records"][:REINSERT_P])
+            del nodes[overflownID]["records"][:REINSERT_P]
+            nodes[overflownID]["rectangle"] = RTReeUtil.leafBoundingRect([item["coords"] for item in nodes[overflownID]["records"]])
+            
+            """ RI4 Close reinsert the removed entries """
+            # Changing the sort in removed entries to ascending
+            removed_entries.reverse()
+            for entry in removed_entries:
+                insert(nodeCap= nodeCap, m= m, nodes= nodes, entry= entry, level= 0)
+            
+        else:
+            """ RI1/2 For all M+1 sort based on descending distance to center of parent rectangle """
+            nodes[overflownID]["children"] = sorted(nodes[overflownID]["children"], key=lambda childID: RTReeUtil.calcRectToRect(nodes[childID]["rectangle"], nodes[overflownID]["rectangle"]), reverse=True)  
+
+            """ RI3 Remove the first p entries from the parent and readjust rectangle """
+            removed_entries = copy.deepcopy(nodes[overflownID]["children"][:REINSERT_P])
+            del nodes[overflownID]["children"][:REINSERT_P]
+            nodes[overflownID]["rectangle"] = RTReeUtil.rectBoundingBox([nodes[childID]["rectangle"] for childID in nodes[overflownID]["children"]])
+            
+            """ RI4 Close reinsert the removed entries """
+            # Changing the sort in removed entries to ascending
+            removed_entries.reverse()
+            for entryID in removed_entries:
+                insert(nodeCap= nodeCap, m= m, nodes= nodes, entry= nodes[entryID], level= level)
         pass
     else:
         """ SPLIT """

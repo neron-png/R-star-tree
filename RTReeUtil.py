@@ -351,3 +351,26 @@ def generateKey(nodes: dict)  -> int:
     new_id = max_existing_id+1
     
     return new_id
+
+def calcPointToRect(point: list, rectangle: list):
+    """_summary_
+
+    Args:
+        point (coords): [x1, y1, z1 ... m1]
+        rectangle (list): [[x1, y1, z1...], [x2, y2, z2...]]
+    """
+    rectCenter = [rectangle[1][dimension]-rectangle[0][dimension] for dimension in range(len(rectangle[0]))]
+    internalSum = 0
+    for dimension in range(len(point)):
+        internalSum += (rectCenter[dimension] - point[dimension])**2
+    
+    return math.sqrt(internalSum)
+
+def calcRectToRect(rect1: list, rect2: list):
+    """_summary_
+
+    Args:
+        rect1 (list): [[x1, y1, z1...], [x2, y2, z2...]]
+        rect2 (list): [[xa, ya, za...], [xb, yb, zb...]]
+    """
+    return calcPointToRect([rect1[1][dimension]-rect1[0][dimension] for dimension in range(len(rect1[0]))], rect2)
