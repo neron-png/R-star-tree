@@ -343,3 +343,11 @@ class MinHeap:
         if smallest != index:
             self.heap[index], self.heap[smallest] = self.heap[smallest], self.heap[index]
             self._heapify_down(smallest)
+
+
+def generateKey(nodes: dict)  -> int:
+    keys = list(nodes.keys()) #NOTE: This includes the "root" key
+    max_existing_id = max(keys, key=lambda key: key if key != "root" else 0)
+    new_id = max_existing_id+1
+    
+    return new_id

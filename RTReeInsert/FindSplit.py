@@ -84,8 +84,15 @@ def findSplit(nodeCap: int, m: int, nodes: dict, splitNodeID: int):
             overlapValue[slit] = 0
         
     splitIndex = min(list(overlapValue.items()), key=lambda item: item[1])[0]
-
-    return [item["id"] for item in childrenEntries[:splitIndex]], [item["id"] for item in childrenEntries[splitIndex:]]
+    splitnodes = [childrenEntries[:splitIndex], childrenEntries[splitIndex:]]
+    
+    # If the nodes are entry nodes, and not leaf or tree nodes, we have to strip them of the "rectangle" properties
+    if "id" not in splitnodes[0][0].keys():
+            for group in splitnodes:
+                for node in group:
+                    del node["rectangle"]
+    
+    return splitnodes
 
 
     

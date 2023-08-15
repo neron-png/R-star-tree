@@ -1,3 +1,4 @@
+import copy
 from pprint import pprint
 from Record import Record
 from RTReeUtil import rectangleContains, overlap, rectAddPoint, min_i, rectangleArea
@@ -36,25 +37,35 @@ def insert(nodeCap: int, m: int, nodes: dict, entry: dict, level: int) -> dict:
     """
     :return: Nodes
     """
-
+    # print(level, entry)
+    
+    # Check if we have a new root
+    # if level > nodes["root"]:
+    #     pass
     """ I1: Invoke chooseSubtree to find the subtree """
     if level == 0:
         subtree = chooseSubtreeLeaf(nodes, entry["coords"])
     else:
-        subtree = chooseSubtree(nodes=nodes, level=level, rect=entry["rectanle"])
+        subtree = chooseSubtree(nodes=nodes, level=level, rect=entry["rectangle"])
     subtree = flatten(subtree)
+    # print(subtree[-1])
 
-    pprint(findSplit(nodeCap=nodeCap, m=m, nodes=nodes, splitNodeID=subtree[-2]))
+    # pprint(findSplit(nodeCap=nodeCap, m=m, nodes=nodes, splitNodeID=subtree[-2]))
+    
     """ I2: Accomodate Entry in N, check if overflown and call treatment """
-    nodes[subtree[-1]].append(entry)
-    if len(nodes[subtree[-1]]) >= nodeCap:
+    overFlowFlag = False
+    if nodes[subtree[-1]]["type"] == "l":
+        nodes[subtree[-1]]["records"].append(entry)
+        if len(nodes[subtree[-1]]["records"]) > nodeCap:
+            overFlowFlag = True
+    else:
+        nodes[subtree[-1]]["children"].append(entry["id"])
+        nodes[entry["id"]] = entry
+        if len(nodes[subtree[-1]]["children"]) > nodeCap:
+            overFlowFlag = True
+    if overFlowFlag:
         overflowTreatment(nodes=nodes, nodeCap=nodeCap, level=level, m=m, overflownID=subtree[-1])
 
-    """ I3: If overflow treatment was called and there was a split, propagate upwards """
-    # TODO
-
-    """ I4: Navigate the insertion path and recalculate the rectangles """
-    # TODO
 
     return nodes
 
@@ -71,12 +82,60 @@ def overflowTreatment(nodes: dict, nodeCap: int, level: int, m:int, overflownID:
         """ TODO """
         pass
     else:
+        """ SPLIT """
         split_groups = findSplit(nodeCap=nodeCap, m=m, nodes=nodes, splitNodeID=overflownID)
-        nodes[overflownID]["children"] = split_groups[0]
+        
+        # Check if we have entries, leaf nodes or nodes
+        """ I3: If overflow treatment was called and there was a split, propagate upwards """
+        if "id" not in split_groups[0][0].keys():
+            # We have entries
+            nodes[overflownID]["records"] = copy.deepcopy(split_groups[0])
+            nodes[overflownID]["rectangle"] = RTReeUtil.leafBoundingRect([item["coords"] for item in nodes[overflownID]["records"]])
 
-        max_existing_id = int(max(list(nodes.keys()))) #FIXME - ignore
-        # nodes[max_existing_id+1] = {"id": max_existing_id+1, "level": level, "children": []}
-        pass
+            # Adding a new node to house the split items
+            # Finding the maximum ID in the tree
+            keys = list(nodes.keys()) #NOTE: This includes the "root" key
+            max_existing_id = max(keys, key=lambda key: key if key != "root" else 0)
+            new_id = max_existing_id+1
+            
+            newNode = copy.deepcopy(nodes[overflownID])
+            newNode["records"] = copy.deepcopy(split_groups[1])
+            newNode["id"] = new_id
+            newNode["rectangle"] = RTReeUtil.leafBoundingRect([item["coords"] for item in newNode["records"]])
+            
+            # Propagate change upwards
+            insert(nodeCap= nodeCap, m= m, nodes= nodes, entry= newNode, level= newNode["level"]+1)
+        else:
+            
+            nodes[overflownID]["children"] = copy.deepcopy([item["id"] for item in split_groups[0]])
+            nodes[overflownID]["rectangle"] = RTReeUtil.rectBoundingBox(rectangles=[nodes[itemID]["rectangle"] for itemID in nodes[overflownID]["children"]])
+            
+            new_id = RTReeUtil.generateKey(nodes)
+            
+            newNode = copy.deepcopy(nodes[overflownID])
+            newNode["children"] = copy.deepcopy([item["id"] for item in split_groups[0]])
+            newNode["id"] = new_id
+            newNode["rectangle"] = RTReeUtil.rectBoundingBox(rectangles=[nodes[itemID]["rectangle"] for itemID in newNode["children"]])
+
+            # Checking if it's a root split
+            if newNode["level"] == nodes["root"]["level"]:
+                # If so, let's create a new root
+                nodes[newNode["id"]] = copy.deepcopy(newNode)
+                
+                new_root_id = RTReeUtil.generateKey(nodes)
+                nodes["root"]["id"] = new_root_id
+                nodes["root"]["level"] = newNode["level"]+1
+                
+                nodes[new_root_id] = copy.deepcopy(newNode)
+                nodes[new_root_id]["children"] = [new_id, overflownID]
+                nodes[new_root_id]["level"] = nodes["root"]["level"]
+                nodes[new_root_id]["rectangle"] = RTReeUtil.rectBoundingBox(rectangles=[nodes[itemID]["rectangle"] for itemID in nodes[new_root_id]["children"]])
+                
+            else:
+                # Propagate change upwards
+                insert(nodeCap= nodeCap, m= m, nodes= nodes, entry= newNode, level= newNode["level"]+1)
+
+        
 
 
 def reinsert():

@@ -9,13 +9,15 @@ def flatten(subtree) -> list:
     input: subtree: [2784, [2781, [2772, [2739, [2608, [2086, 0]]]]]]
     returns: subtree: [2784, 2781, 2772, 2739, 2608, 2086, 0]
     """
-    if not isinstance(subtree[1], list):
-        return subtree
-    else:
-        newtree = [subtree[0]]
-        newtree.extend(flatten(subtree[1]))
-        return newtree
-    
+    try:
+        if not isinstance(subtree[1], list):
+            return subtree
+        else:
+            newtree = [subtree[0]]
+            newtree.extend(flatten(subtree[1]))
+            return newtree
+    except Exception as e:
+        return [subtree]
 
 
 def chooseSubtree(nodes: dict, rect: list, level: int) -> list:

@@ -98,4 +98,4 @@ def run():
     # # StorageHandler.writeRtreeToFile(tempTree.nodes_)
     tempTree.insert(None)
     # tempTree.delete(301073184)
-    # StorageHandler.writeRtreeToFile(tempTree.nodes_)
+    StorageHandler.writeRtreeToFile(tempTree.nodes_)

@@ -26,4 +26,4 @@ COORDINATES_INDEX_SIZE = len(str(NUM_OF_COORDINATES))
 
 """ SESSION STORAGE """
 """ These are global variables housed in the config file, used as stores """
-OVERFLOWTREATMENT = {i: 0 for i in range(1000)}
+OVERFLOWTREATMENT = {i: 1 for i in range(1000)} #FIXME change i from 1 to 0 for production, this currently bypasses the reinsert operation

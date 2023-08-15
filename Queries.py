@@ -42,4 +42,4 @@ def rangeQuery(nodes:dict, nodeId: int, range: list) -> list:
 
 
 def skylineQuery(nodes: dict):
-    
+    pass
