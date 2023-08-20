@@ -7,9 +7,9 @@ import config
 from RTReeInsert.ChooseSubtree import chooseSubtreeLeaf, flatten, chooseSubtree
 from RTReeInsert.FindSplit import findSplit
 from random import randint
+import StorageHandler
 
-
-def insertData(nodeCap: int, m: int, nodes: dict, record: dict) -> dict: #TODO change record: List to record type object
+def insertData(nodeCap: int, m: int, nodes: dict, record: Record) -> dict: #TODO change record: List to record type object
     """
     :param Record dict: {
                         "name": str,
@@ -24,10 +24,8 @@ def insertData(nodeCap: int, m: int, nodes: dict, record: dict) -> dict: #TODO c
                         "sID": int,
                         "coords": list [x, y, z...]
                         }"""
-    """ TODO the above """
-
-    # FIXME remove
-    entry = {"coords": record["coords"], "bID": 0, "sID": 0} 
+    
+    entry = {"coords": record.coords, "bID": StorageHandler.writeRecordToDisk(record), "sID": record.id} 
 
     return insert(nodeCap=nodeCap, m=m, nodes=nodes, entry=entry, level=0)
 
@@ -78,6 +76,7 @@ def overflowTreatment(nodes: dict, nodeCap: int, level: int, m:int, overflownID:
     """ OT1: if level is not the root level and this is the first Overflow Treatment for this level """
     if config.OVERFLOWTREATMENT[level] == 0 and not nodes[nodes["root"]["id"]]["level"] == level:
         REINSERT_P = int(nodeCap*config.SPLIT_P)
+        REINSERT_P = REINSERT_P if nodeCap + 1 - REINSERT_P >= m else nodeCap - m
         config.OVERFLOWTREATMENT[level] += 1
         #Check if the node is a leaf node or not
         if nodes[overflownID]["type"] == "l":
