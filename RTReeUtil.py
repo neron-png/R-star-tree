@@ -55,7 +55,7 @@ def zOrder(*pointCoords, maxBitLen = None) -> int:
     """
     n = len(pointCoords)
     z = 0
-    maxBitLen = int(max([coord.bit_length() for coord in pointCoords]))*n
+    maxBitLen = max([int(coord).bit_length() for coord in pointCoords])*n
     # maxBitLen = sum([coord.bit_length() for coord in pointCoords])
 
     for i in range(0, maxBitLen // n):
@@ -345,6 +345,7 @@ class MinHeap:
             self._heapify_down(smallest)
 
 
+<<<<<<< HEAD
 def isDominated(point1, point2):
     """
     Check if point1 is dominated by point2 in n-dimensional space.
@@ -353,3 +354,34 @@ def isDominated(point1, point2):
         if coord1 > coord2:
             return False
     return True
+=======
+def generateKey(nodes: dict)  -> int:
+    keys = list(nodes.keys()) #NOTE: This includes the "root" key
+    max_existing_id = max(keys, key=lambda key: key if key != "root" else 0)
+    new_id = max_existing_id+1
+    
+    return new_id
+
+def calcPointToRect(point: list, rectangle: list):
+    """_summary_
+
+    Args:
+        point (coords): [x1, y1, z1 ... m1]
+        rectangle (list): [[x1, y1, z1...], [x2, y2, z2...]]
+    """
+    rectCenter = [rectangle[1][dimension]-rectangle[0][dimension] for dimension in range(len(rectangle[0]))]
+    internalSum = 0
+    for dimension in range(len(point)):
+        internalSum += (rectCenter[dimension] - point[dimension])**2
+    
+    return math.sqrt(internalSum)
+
+def calcRectToRect(rect1: list, rect2: list):
+    """_summary_
+
+    Args:
+        rect1 (list): [[x1, y1, z1...], [x2, y2, z2...]]
+        rect2 (list): [[xa, ya, za...], [xb, yb, zb...]]
+    """
+    return calcPointToRect([rect1[1][dimension]-rect1[0][dimension] for dimension in range(len(rect1[0]))], rect2)
+>>>>>>> b807afbd87987cdd5b3b681148ef06e1fb15e72a

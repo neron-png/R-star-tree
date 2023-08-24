@@ -41,6 +41,7 @@ def rangeQuery(nodes:dict, nodeId: int, range: list) -> list:
         return result
 
 
+<<<<<<< HEAD
 def skylineQuery(nodes: dict) -> list:
     """
     The algorithm keeps the discovered skyline points in the set S.
@@ -74,3 +75,7 @@ def skylineQuery(nodes: dict) -> list:
     return S
 
 
+=======
+def skylineQuery(nodes: dict):
+    pass
+>>>>>>> b807afbd87987cdd5b3b681148ef06e1fb15e72a
