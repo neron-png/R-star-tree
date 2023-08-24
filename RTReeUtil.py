@@ -343,3 +343,13 @@ class MinHeap:
         if smallest != index:
             self.heap[index], self.heap[smallest] = self.heap[smallest], self.heap[index]
             self._heapify_down(smallest)
+
+
+def isDominated(point1, point2):
+    """
+    Check if point1 is dominated by point2 in n-dimensional space.
+    """
+    for coord1, coord2 in zip(point1, point2):
+        if coord1 > coord2:
+            return False
+    return True

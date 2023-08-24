@@ -41,5 +41,36 @@ def rangeQuery(nodes:dict, nodeId: int, range: list) -> list:
         return result
 
 
-def skylineQuery(nodes: dict):
+def skylineQuery(nodes: dict) -> list:
+    """
+    The algorithm keeps the discovered skyline points in the set S.
+    If the top of the queue is a data point, it is tested if it is dominated by any point in S. 
+    If yes, it is rejected, otherwise it is inserted into S
+    """
     
+    root = nodes[nodes["root"]["id"]]
+   
+    S = []
+    
+    heap = util.MinHeap()
+    heap.push(util.MinHeapElement(root))
+
+    while heap.heap: 
+        top = heap.pop()
+
+        if top is not None and top.type == "point":
+            flag = True
+            for point in S:
+                if util.isDominated(top, point):
+                    flag = False
+                    break
+            if flag:
+                S.append(top)
+        elif top is not None and top.type == "rectangle":
+            
+            pass
+                
+    
+    return S
+
+
