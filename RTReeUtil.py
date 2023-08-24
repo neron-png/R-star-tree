@@ -7,17 +7,17 @@ import config
 
 def inRectangle(point: list, rectangle: list):
     """
-    
+
     :param  point -> (x, y, z ...): n-dimensional integer coordinates of point
             rectangle -> [(x1, y1, z1 ...), (x2, y2, z2 ...)]
     :return: bool. the distance from (0, 0) to the point (x, y)
     """
-    
+
     for i, coord in enumerate(point):
         if not coord >= rectangle[0][i] or not coord <= rectangle[1][i]:
             return False
-                
-    
+
+
     return True
 
 
@@ -33,7 +33,7 @@ def parseDataJson():
 
     parsedSample = []
     for block in sample:
-        for i, item in enumerate(block["slots"]): 
+        for i, item in enumerate(block["slots"]):
             parsedItem =    {
                                 "bID": block["id"],
                                 "sIndex": item["id"],
@@ -136,7 +136,7 @@ def rectangleIntersection(r1: list, r2: list) -> bool:
     for i, c in enumerate(r1[1]):
         if not r2[0][i] <= c:
             return False
-    
+
     return True
 
 
@@ -164,12 +164,12 @@ def rectangleContains(rectangle: list, point: list) -> bool:
 def min_i(iterable: list):
     min_i = 0
     min_e = iterable[0]
-    
+
     for i, e in enumerate(iterable):
         if e < min_e:
             min_e = e
             min_i = i
-    
+
     return min_e, min_i
 
 
@@ -181,7 +181,7 @@ def findRoot(nodes: dict) -> tuple:
         if nodes[nodeID]["level"] > maxlvl:
             maxID = nodeID
             maxlvl = nodes[nodeID]["level"]
-    
+
     return maxID, maxlvl
 
 
@@ -197,7 +197,7 @@ def rectBoundingBox(rectangles: list):
         rectangles (list): list of rectangles [ [[x1, y1, z1...], [x2, y2, z2...]], [[xb, yb, zb...], [xb, yb, zb...]] ]
     \"\"\"
     dimensions = len(rectangles[0][0])
-    
+
     near_corner = [min([rectangle[0][i] for rectangle in rectangles]) for i in range(dimensions)]
     far_corner = [max([rectangle[1][i] for rectangle in rectangles]) for i in range(dimensions)]
     return [near_corner, far_corner]
@@ -212,15 +212,15 @@ def rectIntersection(rectangles: list) -> list:
     Returns:
         Intersection of all the rectangles: [[x1, y2, zk], [x5, yk, z2]]
     """
-    
+
     if len(rectangles) < 2:
         return rectangles[0]
     intersection = rectangles[0]
-    
+
     dimensions = len(intersection[0])
     for rect in rectangles[1:]:
         new_intersection = [[] for __ in range(2)]
-        
+
         for dimension in range(dimensions):
             min_val = max(intersection[0][dimension], rect[0][dimension])
             max_val = min(intersection[1][dimension], rect[1][dimension])
@@ -252,7 +252,7 @@ def rectangleArea(rectangle: list):
         rectangle (list): [[x1, y1, z1...], [x2, y2, z2...]]
     returns: Area: int
     """
-    return math.prod( [rectangle[1][dimension] - rectangle[0][dimension] 
+    return math.prod( [rectangle[1][dimension] - rectangle[0][dimension]
                     for dimension in range(len(rectangle[0]))])
 
 
@@ -271,7 +271,7 @@ def overlap(rectangle: list, nodeRectangles:list):
             continue
         otherArea = rectangleArea(otherIntersect)
         areaSum += otherArea
-    
+
     return areaSum - myArea
 
 ##########
@@ -288,19 +288,14 @@ def margin(rectangle: list) -> int:
     margin = 0
     for axis in range(len(rectangle[0])):
         margin += rectangle[1][axis] - rectangle[0][axis]
-    
+
     return margin
 
 
 class MinHeapElement:
     def __init__(self, node: dict):
-        self.node = node
-        if node["type"] == "n":
-            self.type = "rectangle"
-            self.l1 = sum(node["rectangle"][0])
-        else:
-            self.type = "point"
-            self.l1 = sum(node["coords"])
+        self.id = node["id"]
+        self.l1 = sum(node["rectangle"][0])
 
 class MinHeap:
     def __init__(self):
@@ -345,7 +340,6 @@ class MinHeap:
             self._heapify_down(smallest)
 
 
-<<<<<<< HEAD
 def isDominated(point1, point2):
     """
     Check if point1 is dominated by point2 in n-dimensional space.
@@ -354,12 +348,12 @@ def isDominated(point1, point2):
         if coord1 > coord2:
             return False
     return True
-=======
+
 def generateKey(nodes: dict)  -> int:
     keys = list(nodes.keys()) #NOTE: This includes the "root" key
     max_existing_id = max(keys, key=lambda key: key if key != "root" else 0)
     new_id = max_existing_id+1
-    
+
     return new_id
 
 def calcPointToRect(point: list, rectangle: list):
@@ -373,7 +367,7 @@ def calcPointToRect(point: list, rectangle: list):
     internalSum = 0
     for dimension in range(len(point)):
         internalSum += (rectCenter[dimension] - point[dimension])**2
-    
+
     return math.sqrt(internalSum)
 
 def calcRectToRect(rect1: list, rect2: list):
@@ -384,4 +378,18 @@ def calcRectToRect(rect1: list, rect2: list):
         rect2 (list): [[xa, ya, za...], [xb, yb, zb...]]
     """
     return calcPointToRect([rect1[1][dimension]-rect1[0][dimension] for dimension in range(len(rect1[0]))], rect2)
->>>>>>> b807afbd87987cdd5b3b681148ef06e1fb15e72a
+
+
+def getRecordsFromQueryResult(result: list) -> list:
+    # Get the list of actual records from datafile pointed by the result of a query
+    records = []
+
+    # For each datafile-point, fetch the actual record
+    for pointer in result:
+        import StorageHandler
+        record = StorageHandler.fetchRecordFromDisk(pointer["bID"], pointer["sIndex"])
+        record.pop("_")
+        record["coords"] = [c / config.MANTISSA for c in record["coords"]]
+        records.append(record)
+
+    return records
