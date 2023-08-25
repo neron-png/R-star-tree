@@ -72,8 +72,8 @@ class Rtree():
 def run():
 
     # parseData = RTReeUtil.parseDataJson()
-    tempTree = Rtree(config.INDEXFILE)
-    # tempTree = Rtree()
+    # tempTree = Rtree(config.INDEXFILE)
+    tempTree = Rtree()
 
     # r = Record(id=32, coords=[1,2], name="Greece")
     # StorageHandler.writeRecordToDisk(r)
@@ -88,4 +88,4 @@ def run():
     # tempTree.insert(None)
     # tempTree.delete(301073184)
     # StorageHandler.writeRtreeToFile(tempTree.nodes)
-    print(tempTree.skylineQuery())
+    # print(tempTree.skylineQuery())

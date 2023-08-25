@@ -34,12 +34,14 @@ def searchByID(id):
 
 
 def getBlockFromDisk(blockID):
-
+    blockID -=1
     with open(config.DATAFILE, 'r', encoding='utf-8') as datafile:
         datafile.seek(blockID*config.BLOCKSIZE)
         contents = datafile.read(config.BLOCKSIZE)
-        
+        print(contents)
         if contents.startswith("["):
+            contents = contents[1:]
+        if contents.startswith(","):
             contents = contents[1:]
         if contents.endswith("]"):
             contents = contents[:-1]

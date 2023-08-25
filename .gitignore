@@ -9,7 +9,7 @@ c
 storageHandler_old.py
 small_Data.json
 _rtree.pdf
-
+.vscode/
 # C extensions
 *.so
 *.xml
