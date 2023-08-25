@@ -6,12 +6,11 @@ def delete(nodes, nodeCap, id):
         @return: (True) if found and deleted | (False, "Reason") if not succeeded
     """
     
-    christosHasFixedIt = True
-    if christosHasFixedIt:
-        exists, item = StorageHandler.searchByID(id)
-        print(exists, item)
-        if not exists:
-            return (False, item)
+    
+    exists, item = StorageHandler.searchByID(id)
+    print(exists, item)
+    if not exists:
+        return (False, item)
 
     #TODO update block on disk
 
