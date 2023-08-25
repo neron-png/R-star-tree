@@ -62,17 +62,15 @@ class Rtree():
         self.nodes = bottom_up(self.nodeCap, self.nodes, points)
 
     
-    def insert(self, record: dict|None):
+    def insert(self, record: Record):
         """
-        :param Record dict: {
-                            "bID": int,
-                            "sID": int,
-                            "coords": list [x, y, z...]
-                            }
+        :param Record Record
         :return: None, adds node to tree
         """
+        # if record == None:
+            # record=Record(id=1201029, coords=[41.3672865000, 26.1587581000], name="Cousgo")
         from RTReeInsert.Insert import insertData
-        self.nodes = insertData(nodeCap=self.nodeCap, m=self.m, nodes=self.nodes, record=Record(id=1201029, coords=[41.3672865000, 26.1587581000], name="Cousgo"))
+        insertData(nodeCap=self.nodeCap, m=self.m, nodes=self.nodes, record=record)
         
     #TODO: Update to nodes_
     def delete(self, id):
@@ -95,6 +93,8 @@ def run():
     tempTree.bottom_up(parseData)
     # print(tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
     # # StorageHandler.writeRtreeToFile(tempTree.nodes_)
-    tempTree.insert(None)
+    # pprint(tempTree.nodes[0])
+    tempTree.insert(Record(id=1201029, coords=[41.3672865000, 26.1587581000], name="Cousgo"))
+    tempTree.delete(id=1201029)
     # tempTree.delete(301073184)
     StorageHandler.writeRtreeToFile(tempTree.nodes)

@@ -25,8 +25,8 @@ def insertData(nodeCap: int, m: int, nodes: dict, record: Record) -> dict: #TODO
                         "coords": list [x, y, z...]
                         }"""
     
+    # pprint(nodes[0]["records"])
     entry = {"coords": record.coords, "bID": StorageHandler.writeRecordToDisk(record), "sID": record.id} 
-
     return insert(nodeCap=nodeCap, m=m, nodes=nodes, entry=entry, level=0)
 
     
@@ -82,8 +82,9 @@ def overflowTreatment(nodes: dict, nodeCap: int, level: int, m:int, overflownID:
         if nodes[overflownID]["type"] == "l":
             
             """ RI1/2 For all M+1 sort based on descending distance to center of parent rectangle """
+            # pprint(nodes[overflownID])
             nodes[overflownID]["records"] = sorted(nodes[overflownID]["records"], key=lambda point: RTReeUtil.calcPointToRect(point["coords"], nodes[overflownID]["rectangle"]), reverse=True)  
-
+            # pprint(nodes[overflownID])
             """ RI3 Remove the first p entries from the parent and readjust rectangle """
             
             removed_entries = copy.deepcopy(nodes[overflownID]["records"][:REINSERT_P])
