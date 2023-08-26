@@ -14,8 +14,7 @@ class Rtree():
         self.nodes = {"root": {"id": 0, "level": 0}}
         self.m = int(config.m*self.nodeCap)
         """
-        nodes = [{"id": 1, "level":0, "type": n, "rectangle" = []}, ...]
-        nodes_ = {"root": {"id": 0, "level": 0},
+        nodes = {"root": {"id": 0, "level": 0},
                     1: {"id": 1, "level":0, "type": n, "rectangle" = []}...}
         """
         if indexfile is not None:
@@ -61,10 +60,10 @@ class Rtree():
         from RTReeInsert.Insert import insertData
         insertData(nodeCap=self.nodeCap, m=self.m, nodes=self.nodes, record=record)
         
-    #TODO: Update to nodes_
+    
     def delete(self, id):
         import RTReeDelete
-        RTReeDelete.delete(self.nodes, self.nodeCap, id)
+        RTReeDelete.delete(nodes=self.nodes, nodeCap= self.nodeCap, id=id, m=self.m)
 
 
 

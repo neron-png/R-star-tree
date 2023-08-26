@@ -13,7 +13,7 @@ def searchByID(id):
         @return: (True, record) if found | (False, "Reason") if not succeeded
     """
     item = None
-
+    bID = None
     flag = False
     for i in itertools.count(start=1):
         if flag:
@@ -24,13 +24,14 @@ def searchByID(id):
                 if record["id"] == id:
                     item = record
                     flag = True
+                    bID = i
                     break
 
         except Exception as e:
-            return (False, "Item not found")
+            return (False, "Item not found", None)
             break
     
-    return (True, item)
+    return (True, item, bID)
 
 
 def getBlockFromDisk(blockID):

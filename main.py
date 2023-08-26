@@ -23,6 +23,6 @@ if __name__ == "__main__":
     tempTree.delete(id=1201029)
     # tempTree.insert(None)
     # tempTree.delete(301073184)
-    StorageHandler.writeRtreeToFile(tempTree.nodes)
+    # StorageHandler.writeRtreeToFile(tempTree.nodes)
     # print(tempTree.skylineQuery())
 

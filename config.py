@@ -6,7 +6,7 @@ ENTRYSIZE = 256
 INPUTFILE = "map.osm"
 DATAFILE = "data.json"
 INDEXFILE = "index.json"
-m = 0.4 # Minimum Fill Ratio #TODO #FIXME update Bulkload to accomodate this
+m = 0.4 # Minimum Fill Ratio #TODO #FIXME change to 0.4 for production
 P = 32 # Page 4 in paper, optimizing for large blocks when calculating overlap
 SPLIT_P = 0.3 # Page 6 in paper, what percentage of the nodes in an overflown node to use in a reinsertion
 
