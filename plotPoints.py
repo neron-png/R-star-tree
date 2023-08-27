@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from matplotlib.patches import Rectangle
 
 """ Which levels to display, None for all"""
-displayLevels = (4, 5, 6)
+displayLevels = (0, 1, 2, 3, 4, 5, 6)
 
 displayLabels = True
 
@@ -30,18 +30,21 @@ if __name__ == "__main__":
     rectangles_width = []
     rectangle_ids = []
     rectangle_levels = []
-    for item in contents:
-        if item["type"] == 'l':
-            for point in item["records"]:
-                x.append(point["coords"][0])
-                y.append(point["coords"][1])
-        if displayLevels == None or item["level"] in displayLevels:
-            rectangles.append(tuple(item["rectangle"][0]))
-            width = item["rectangle"][1][0] - item["rectangle"][0][0]
-            height = item["rectangle"][1][1] - item["rectangle"][0][1]
-            rectangles_width.append([width, height])
-            rectangle_ids.append(item["id"])
-            rectangle_levels.append(item["level"])
+    for item in list(contents.values()):
+        try:
+            if item["type"] == 'l':
+                for point in item["records"]:
+                    x.append(point["coords"][0])
+                    y.append(point["coords"][1])
+            if displayLevels == None or item["level"] in displayLevels:
+                rectangles.append(tuple(item["rectangle"][0]))
+                width = item["rectangle"][1][0] - item["rectangle"][0][0]
+                height = item["rectangle"][1][1] - item["rectangle"][0][1]
+                rectangles_width.append([width, height])
+                rectangle_ids.append(item["id"])
+                rectangle_levels.append(item["level"])
+        except Exception as e:
+            continue
         
     fig = plt.figure()
     ax = fig.add_subplot(111)
