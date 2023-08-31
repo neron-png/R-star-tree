@@ -129,5 +129,4 @@ def skylineQuery(nodes: dict) -> list:
                 if flag:
                     S.append(dominant)
 
-    print(S)
     return S

@@ -22,7 +22,7 @@ if __name__ == "__main__":
     # tempTree.insert(Record(id=1201029, coords=[41.3672865000, 26.1587581000], name="Cousgo"))
     # tempTree.delete(id=1201029)
     # tempTree.insert(None)
-    # tempTree.delete(301073184)
+    # tempTree.delete(301073184) 
     StorageHandler.writeRtreeToFile(tempTree.nodes)
     # print(tempTree.skylineQuery())
 
