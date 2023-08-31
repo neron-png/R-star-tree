@@ -291,63 +291,27 @@ def margin(rectangle: list) -> int:
 
     return margin
 
-
-class MinHeapElement:
-    def __init__(self, node: dict):
-        self.id = node["id"]
-        self.l1 = sum(node["rectangle"][0])
-
-class MinHeap:
-    def __init__(self):
-        self.heap = []
-
-    def push(self, node):
-        item = MinHeapElement(node)
-        self.heap.append(item)
-        self._heapify_up(len(self.heap) - 1)
-
-    def pop(self):
-        if not self.heap:
-            return None
-
-        if len(self.heap) == 1:
-            return self.heap.pop()
-
-        root = self.heap[0]
-        self.heap[0] = self.heap.pop()
-        self._heapify_down(0)
-        return root
-
-    def _heapify_up(self, index):
-        parent_idx = (index - 1) // 2
-        while index > 0 and self.heap[index].l1 < self.heap[parent_idx].l1:
-            self.heap[index], self.heap[parent_idx] = self.heap[parent_idx], self.heap[index]
-            index = parent_idx
-            parent_idx = (index - 1) // 2
-
-    def _heapify_down(self, index):
-        left_child_idx = 2 * index + 1
-        right_child_idx = 2 * index + 2
-        smallest = index
-
-        if left_child_idx < len(self.heap) and self.heap[left_child_idx].l1 < self.heap[smallest].l1:
-            smallest = left_child_idx
-        if right_child_idx < len(self.heap) and self.heap[right_child_idx].l1 < self.heap[smallest].l1:
-            smallest = right_child_idx
-
-        if smallest != index:
-            self.heap[index], self.heap[smallest] = self.heap[smallest], self.heap[index]
-            self._heapify_down(smallest)
-
-
-def isDominated(point1, point2):
+def isDominated(point_a, point_b):
     """
-    Check if point1 is dominated by point2 in n-dimensional space.
+    Check if point A is dominated by point B.
+
+    :param point_a: List representing point A in the multi-dimensional space.
+    :param point_b: List representing point B in the multi-dimensional space.
+    :return: True if point A is dominated by point B, False otherwise.
     """
-    for coord1, coord2 in zip(point1, point2):
-        if coord1 > coord2:
+    any_better = False
+    any_worse = False
+
+    for a, b in zip(point_a, point_b):
+        if a > b:
+            any_better = True
+        elif a < b:
+            any_worse = True
+
+        if any_better and any_worse:
             return False
-    return True
+
+    return any_better
 
 def generateKey(nodes: dict)  -> int:
     keys = list(nodes.keys()) #NOTE: This includes the "root" key
