@@ -12,7 +12,8 @@ def bottom_up(nodeCap: int, nodes: dict, points) -> dict:
             , ...
         :return: None, fills up the nodes as a flat list
         """
-
+        if nodes["root"]["first_insert"]:
+            nodes["root"]["first_insert"] = False
         # Sorting the points based on their z-order score
         sortedPoints = sorted(points, key=lambda item: zOrder(*item["coords"]))
 

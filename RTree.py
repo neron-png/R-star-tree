@@ -11,7 +11,7 @@ class Rtree():
 
     def __init__(self, indexfile=None):
         self.nodeCap: int = config.BLOCKSIZE // config.ENTRYSIZE
-        self.nodes = {"root": {"id": 0, "level": 0}}
+        self.nodes = {"root": {"id": 0, "level": 0, "first_insert": True}}#, "0": {"id": 0, "type": "l", "level": 0, "records": [], "rectangle": [[0, 0], [1, 1]]}}
         self.m = int(config.m*self.nodeCap)
         """
         nodes = {"root": {"id": 0, "level": 0},
@@ -70,21 +70,21 @@ class Rtree():
 
 def run():
 
-    # parseData = RTReeUtil.parseDataJson()
     # tempTree = Rtree(config.INDEXFILE)
     tempTree = Rtree()
 
+    parseData = RTReeUtil.parseDataJson()
+    tempTree.bottom_up(parseData)
     # r = Record(id=32, coords=[1,2], name="Greece")
     # StorageHandler.writeRecordToDisk(r)
     # StorageHandler.deleteRecordFromDisk(2781,32)
 
-    # tempTree.bottom_up(parseData)
     # print(tempTree.rangeQuery([[41.5,26.5],[42.1,26.52]]))
     # # StorageHandler.writeRtreeToFile(tempTree.nodes_)
     # pprint(tempTree.nodes[0])
-    tempTree.insert(Record(id=1201029, coords=[41.3672865000, 26.1587581000], name="Cousgo"))
-    tempTree.delete(id=1201029)
+    # tempTree.insert(Record(id=1201029, coords=[41.3672865000, 26.1587581000], name="Cousgo"))
+    # tempTree.delete(id=1201029)
     # tempTree.insert(None)
     # tempTree.delete(301073184)
-    # StorageHandler.writeRtreeToFile(tempTree.nodes)
+    StorageHandler.writeRtreeToFile(tempTree.nodes)
     # print(tempTree.skylineQuery())

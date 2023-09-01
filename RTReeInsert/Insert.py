@@ -9,7 +9,7 @@ from RTReeInsert.FindSplit import findSplit
 from random import randint
 import StorageHandler
 
-def insertData(nodeCap: int, m: int, nodes: dict, record: Record) -> dict: #TODO change record: List to record type object
+def insertData(nodeCap: int, m: int, nodes: dict, record: Record) -> dict: 
     """
     :param Record dict: {
                         "name": str,
@@ -26,7 +26,13 @@ def insertData(nodeCap: int, m: int, nodes: dict, record: Record) -> dict: #TODO
                         }"""
     
     # pprint(nodes[0]["records"])
-    entry = {"coords": record.coords, "bID": StorageHandler.writeRecordToDisk(record), "sID": record.id} 
+    
+    if nodes["root"]["first_insert"]:
+            nodes["root"]["first_insert"] = False
+            nodes[nodes["root"]["id"]] = {"id": 0, "type": "l", "level": 0, "records": [], "rectangle": [[0, 0], [1, 1]]}
+    
+    entry = {"coords": record.coords, "bID": StorageHandler.writeRecordToDisk(record), "sID": record.id} # TODO revert this!
+    # entry = {"coords": record.coords, "bID": 666, "sID": record.id} 
     return insert(nodeCap=nodeCap, m=m, nodes=nodes, entry=entry, level=0)
 
     
@@ -41,7 +47,7 @@ def insert(nodeCap: int, m: int, nodes: dict, entry: dict, level: int) -> dict:
     # if level > nodes["root"]:
     #     pass
     """ I1: Invoke chooseSubtree to find the subtree """
-    if level == 0:
+    if "coords" in entry.keys():
         subtree = chooseSubtreeLeaf(nodes, entry["coords"])
     else:
         subtree = chooseSubtree(nodes=nodes, level=level, rect=entry["rectangle"])
@@ -52,13 +58,15 @@ def insert(nodeCap: int, m: int, nodes: dict, entry: dict, level: int) -> dict:
     
     """ I2: Accomodate Entry in N, check if overflown and call treatment """
     overFlowFlag = False
-    if nodes[subtree[-1]]["type"] == "l":
+    if nodes[subtree[-1]]["type"] == "l" and "coords" in entry.keys():
         nodes[subtree[-1]]["records"].append(entry)
+        nodes[subtree[-1]]["rectangle"] = RTReeUtil.leafBoundingRect([item["coords"] for item in nodes[subtree[-1]]["records"]])
         if len(nodes[subtree[-1]]["records"]) > nodeCap:
             overFlowFlag = True
     else:
         nodes[subtree[-1]]["children"].append(entry["id"])
         nodes[entry["id"]] = entry
+        nodes[subtree[-1]]["rectangle"] = RTReeUtil.rectBoundingBox([nodes[ID]["rectangle"] for ID in nodes[subtree[-1]]["children"]])
         if len(nodes[subtree[-1]]["children"]) > nodeCap:
             overFlowFlag = True
     if overFlowFlag:
@@ -125,8 +133,8 @@ def overflowTreatment(nodes: dict, nodeCap: int, level: int, m:int, overflownID:
 
             # Adding a new node to house the split items
             # Finding the maximum ID in the tree
-            keys = list(nodes.keys()) #NOTE: This includes the "root" key
-            max_existing_id = max(keys, key=lambda key: key if key != "root" else 0)
+            keys = [int(key) if isinstance(key, int) else 0 for key in list(nodes.keys())] #NOTE: This includes the "root" key
+            max_existing_id = max(keys)
             new_id = max_existing_id+1
             
             newNode = copy.deepcopy(nodes[overflownID])
@@ -135,7 +143,25 @@ def overflowTreatment(nodes: dict, nodeCap: int, level: int, m:int, overflownID:
             newNode["rectangle"] = RTReeUtil.leafBoundingRect([item["coords"] for item in newNode["records"]])
             
             # Propagate change upwards
-            insert(nodeCap= nodeCap, m= m, nodes= nodes, entry= newNode, level= newNode["level"]+1)
+            # Checking if it's a root split
+            if newNode["level"] == nodes["root"]["level"]:
+                # If so, let's create a new root
+                nodes[newNode["id"]] = copy.deepcopy(newNode)
+                
+                new_root_id = RTReeUtil.generateKey(nodes)
+                nodes["root"]["id"] = new_root_id
+                nodes["root"]["level"] = newNode["level"]+1
+                
+                nodes[new_root_id] = copy.deepcopy(newNode)
+                nodes[new_root_id]["id"] = new_root_id
+                nodes[new_root_id]["children"] = [new_id, overflownID]
+                nodes[new_root_id]["level"] = nodes["root"]["level"]
+                nodes[new_root_id]["type"] = "n"
+                nodes[new_root_id]["rectangle"] = RTReeUtil.rectBoundingBox(rectangles=[nodes[itemID]["rectangle"] for itemID in nodes[new_root_id]["children"]])
+                del nodes[new_root_id]["records"]
+            else:
+                # Propagate change upwards
+                insert(nodeCap= nodeCap, m= m, nodes= nodes, entry= newNode, level= newNode["level"]+1)
         else:
             
             nodes[overflownID]["children"] = copy.deepcopy([item["id"] for item in split_groups[0]])
@@ -158,6 +184,7 @@ def overflowTreatment(nodes: dict, nodeCap: int, level: int, m:int, overflownID:
                 nodes["root"]["level"] = newNode["level"]+1
                 
                 nodes[new_root_id] = copy.deepcopy(newNode)
+                nodes[new_root_id]["id"] = new_root_id
                 nodes[new_root_id]["children"] = [new_id, overflownID]
                 nodes[new_root_id]["level"] = nodes["root"]["level"]
                 nodes[new_root_id]["rectangle"] = RTReeUtil.rectBoundingBox(rectangles=[nodes[itemID]["rectangle"] for itemID in nodes[new_root_id]["children"]])

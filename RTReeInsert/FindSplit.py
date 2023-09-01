@@ -62,7 +62,7 @@ def findSplit(nodeCap: int, m: int, nodes: dict, splitNodeID: int):
     """ S2 """
     """ Choose Split Index """
 
-    childrenEntries.sort(key= lambda entry: entry["rectangle"][0][minAxis]) #TODO this seems iffy
+    childrenEntries.sort(key= lambda entry: entry["rectangle"][0][minAxis]) 
     overlapValue = {}
     for k in range(1, nodeCap - 2*m + 2):
         slit = (m-1)+k

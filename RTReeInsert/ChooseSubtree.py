@@ -85,4 +85,4 @@ def chooseSubtreeLeaf(nodes: dict, point: list) -> list:
 
     #Convert the point to a point-sized rectangle
     rect = [deepcopy(point), deepcopy(point)]
-    return chooseSubtree(nodes = nodes, level= 0, rect=rect)
+    return chooseSubtree(nodes = nodes, level= -1, rect=rect)

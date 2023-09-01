@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from matplotlib.patches import Rectangle
 
 """ Which levels to display, None for all"""
-displayLevels = (0, 1, 2, 3, 4, 5, 6)
+displayLevels = (0,)
 
 displayLabels = True
 
