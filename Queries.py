@@ -1,5 +1,6 @@
 import RTReeUtil as util
 
+
 def rangeQuery(nodes:dict, nodeId: int, range: list) -> list:
     """
     :param nodes: dict of all r-tree nodes
@@ -41,50 +42,13 @@ def rangeQuery(nodes:dict, nodeId: int, range: list) -> list:
         return result
 
 
-# def skylineQuery(nodes: dict) -> list:
-#     """
-#     The algorithm keeps the discovered skyline points in the set S.
-#     If the top of the queue is a data point, it is tested if it is dominated by any point in S.
-#     If yes, it is rejected, otherwise it is inserted into S
-#     """
-
-#     root = nodes[nodes["root"]["id"]]
-
-#     S = []
-#     # S contains records, i.e.: {"bID": 1011, "sIndex": 1861645905, "coords": [414867382000, 261587580000]}
-#     # heap initilized with root, i.e.:
-#     # {"id": 2784, "children": [2781, 2782, 2783, 2790], "level": 6, "type": "n", "rectangle": [[413672855000, 261587580000], [416101905000, 266318299000]]}
-
-#     heap = util.MinHeap()
-#     heap.push(root)
-
-#     while heap.heap:
-#         top = heap.pop()
-
-#         if top is not None and nodes[top.id]["type"] == "n":
-#             flag = True
-#             for point in S:
-#                 if util.isDominated(nodes[top.id]["rectangle"][0], point["coords"]):
-#                     flag = False
-#                     break
-#             if flag:
-#                 for childId in nodes[top.id]["children"]:
-#                     heap.push(nodes[childId])
-
-#         elif top is not None and nodes[top.id]["type"] == "l":
-#             for child in nodes[top.id]["records"]:
-#                 flag = True
-#                 for point in S:
-#                     if util.isDominated(child["coords"], point["coords"]):
-#                         flag = False
-#                         break
-#                 if flag:
-#                     S.append(child)
-
-#     return S
-
-
 def skylineQuery(nodes: dict) -> list:
+    """
+    The algorithm keeps the discovered skyline points in the set S.
+    If the top of the queue is a data point, it is tested if it is dominated by any point in S.
+    If yes, it is rejected, otherwise it is inserted into S
+    """
+
     root = nodes[nodes["root"]["id"]]
     S = []
 
@@ -130,3 +94,26 @@ def skylineQuery(nodes: dict) -> list:
                     S.append(dominant)
 
     return S
+
+
+def nearestNeighborsQuery(nodes: dict, currentNode, queryPoint, k: int, bestNeighbors: list):
+    if currentNode["type"] == "l":
+        for point in currentNode["records"]:
+            distance = util.euclideanDistance(queryPoint, point["coords"])
+            bestNeighbors.append((point, distance))
+        bestNeighbors.sort(key=lambda x: x[1])
+        return bestNeighbors[:k]
+
+    # Sort child nodes by distance to query point
+    currentNode["children"].sort(key=lambda child: util.calculateMinDistance(nodes[child]["rectangle"], queryPoint))
+
+    for childId in currentNode["children"]:
+        if not util.calculateMinDistance(nodes[childId]["rectangle"], queryPoint) < bestNeighbors[-1][1]:
+            break  # Skip this child, it cannot contain closer points
+        bestNeighbors = nearestNeighborsQuery(nodes, nodes[childId], queryPoint, k, bestNeighbors)
+        bestNeighbors.sort(key=lambda x: x[1])
+        bestNeighbors = bestNeighbors[:k]
+
+    return bestNeighbors
+
+

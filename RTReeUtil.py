@@ -1,5 +1,6 @@
 import math
 import config
+import numpy as np
 
 ###########
 # Loading #
@@ -357,3 +358,29 @@ def getRecordsFromQueryResult(result: list) -> list:
         records.append(record)
 
     return records
+
+
+def euclideanDistance(point1, point2):
+    # Ensure both points are NumPy arrays for element-wise operations
+    point1 = np.array(point1)
+    point2 = np.array(point2)
+
+    # Calculate the squared differences element-wise
+    squared_diff = (point1 - point2) ** 2
+
+    # Sum up the squared differences and take the square root
+    distance = np.sqrt(np.sum(squared_diff))
+    return distance
+
+def calculateMinDistance(boundingBox, point):
+    # Ensure both bounding_box and point are NumPy arrays
+    boundingBox = np.array(boundingBox)
+    point = np.array(point)
+
+    # Calculate the squared distances for each dimension
+    squared_distances = np.maximum(0, np.maximum(point - boundingBox[:, 1], boundingBox[:, 0] - point) ** 2)
+
+    # Calculate the Euclidean distance by summing the squared distances and taking the square root
+    euclidean_distance = np.sqrt(np.sum(squared_distances))
+
+    return euclidean_distance

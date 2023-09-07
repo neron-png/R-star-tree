@@ -37,6 +37,10 @@ class Rtree():
     def skylineQuery(self) -> list:
         return RTReeUtil.getRecordsFromQueryResult(Queries.skylineQuery(self.nodes))
 
+    def nearestNeighborsQuery(self, queryPoint: list, k: int):
+        return Queries.nearestNeighborsQuery(self.nodes, self.nodes[self.nodes["root"]["id"]], [c * config.MANTISSA for c in queryPoint], k, [])
+
+
     def bottom_up(self, points):
         """
         :param points: list of simple point coordinates
@@ -49,7 +53,7 @@ class Rtree():
         from RTReeBulkload import bottom_up
         self.nodes = bottom_up(self.nodeCap, self.nodes, points)
 
-    
+
     def insert(self, record: Record):
         """
         :param Record Record
@@ -59,8 +63,8 @@ class Rtree():
             # record=Record(id=1201029, coords=[41.3672865000, 26.1587581000], name="Cousgo")
         from RTReeInsert.Insert import insertData
         insertData(nodeCap=self.nodeCap, m=self.m, nodes=self.nodes, record=record)
-        
-    
+
+
     def delete(self, id):
         import RTReeDelete
         RTReeDelete.delete(nodes=self.nodes, nodeCap= self.nodeCap, id=id, m=self.m)
