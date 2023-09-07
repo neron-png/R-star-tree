@@ -38,7 +38,8 @@ class Rtree():
         return RTReeUtil.getRecordsFromQueryResult(Queries.skylineQuery(self.nodes))
 
     def nearestNeighborsQuery(self, queryPoint: list, k: int):
-        return Queries.nearestNeighborsQuery(self.nodes, self.nodes[self.nodes["root"]["id"]], [c * config.MANTISSA for c in queryPoint], k, [])
+        return RTReeUtil.getRecordsFromQueryResult(
+            [o[0] for o in Queries.nearestNeighborsQuery(self.nodes, self.nodes[self.nodes["root"]["id"]], [c * config.MANTISSA for c in queryPoint], k, [])])
 
 
     def bottom_up(self, points):
