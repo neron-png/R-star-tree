@@ -379,8 +379,6 @@ def euclideanDistance(point1, point2):
     return distance
 
 def calculateMinDistance(boundingBox, point):
-    # Ensure both bounding_box and point are NumPy arrays
-
     minDist = 0
 
     for dimension, i in enumerate(point):
