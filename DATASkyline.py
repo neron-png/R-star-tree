@@ -1,5 +1,4 @@
 from RTree import Rtree
-from Record import Record
 import StorageHandler
 import RTReeUtil
 
@@ -12,7 +11,7 @@ if __name__ == "__main__":
     
     tree = Rtree()
     
-    for size in (1000, 2000, 3200, 4000):
+    for size in (1000, 2000, 3000, 4000):
         dataSet = parsedData[:size]
         tree.bottom_up(parsedData)
         from StorageHandler import writeRtreeToFile
@@ -21,7 +20,3 @@ if __name__ == "__main__":
         tree.skylineQuery() 
         end = time()
         print(f"{int(1000*(end-start))}ms")
-
-
-            
-    
