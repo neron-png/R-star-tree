@@ -29,9 +29,8 @@ class Rtree():
         if len(corners) != config.NUM_OF_COORDINATES:
             raise Exception("Provide the exact minumum amount of points for a " + str(config.NUM_OF_COORDINATES) + "-D rectangle.")
 
-        return RTReeUtil.getRecordsFromQueryResult(
-            Queries.rangeQuery(self.nodes, self.nodes["root"]["id"],
-                               [[int(corner[axis] * config.MANTISSA) for axis in range(len(corner))] for _, corner in enumerate(corners)]))
+        return Queries.rangeQuery(self.nodes, self.nodes["root"]["id"],
+                                  [[int(corner[axis] * config.MANTISSA) for axis in range(len(corner))] for _, corner in enumerate(corners)])
 
     def skylineQuery(self) -> list:
         return RTReeUtil.getRecordsFromQueryResult(Queries.skylineQuery(self.nodes))
@@ -40,8 +39,7 @@ class Rtree():
         if len(queryPoint) != config.NUM_OF_COORDINATES:
             raise Exception("Provide the exact minumum amount of coordinates for a " + str(config.NUM_OF_COORDINATES) + "-D point.")
         
-        return RTReeUtil.getRecordsFromQueryResult(
-            [o[0] for o in Queries.nearestNeighborsQuery(self.nodes, self.nodes[self.nodes["root"]["id"]], [c * config.MANTISSA for c in queryPoint], k, [])])
+        return [o[0] for o in Queries.nearestNeighborsQuery(self.nodes, self.nodes[self.nodes["root"]["id"]], [c * config.MANTISSA for c in queryPoint], k, [])]
 
 
     def bottom_up(self, points):

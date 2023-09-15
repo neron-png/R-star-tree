@@ -31,6 +31,7 @@ if __name__ == "__main__":
     skylineQueryResults = tree.skylineQuery()
     print(skylineQueryResults)
 
-    knnQueryResults = tree.nearestNeighborsQuery(queryPoint=[41.47, 26.16], k=100)
+    point = [41.47, 26.16]
+    knnQueryResults = tree.nearestNeighborsQuery(queryPoint=point, k=100)
     print(knnQueryResults)
 
