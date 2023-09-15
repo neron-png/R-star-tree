@@ -178,6 +178,8 @@ def findRoot(nodes: dict) -> tuple:
     maxID = 0
 
     for nodeID in list(nodes):
+        if nodeID == "root":
+            continue
         if nodes[nodeID]["level"] > maxlvl:
             maxID = nodeID
             maxlvl = nodes[nodeID]["level"]
