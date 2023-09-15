@@ -1,6 +1,5 @@
 import math
 import config
-import numpy as np
 
 ###########
 # Loading #
@@ -361,6 +360,13 @@ def getRecordsFromQueryResult(result: list) -> list:
 
 
 def euclideanDistance(point1, point2):
+    
+    dist = 0
+    for dimension, i in enumerate(point1):
+        dist += (point1[dimension]-point2[dimension])**2
+    
+    return dist**(1/2)
+
     # Ensure both points are NumPy arrays for element-wise operations
     point1 = np.array(point1)
     point2 = np.array(point2)
