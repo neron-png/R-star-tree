@@ -374,13 +374,18 @@ def euclideanDistance(point1, point2):
 
 def calculateMinDistance(boundingBox, point):
     # Ensure both bounding_box and point are NumPy arrays
-    boundingBox = np.array(boundingBox)
-    point = np.array(point)
 
-    # Calculate the squared distances for each dimension
-    squared_distances = np.maximum(0, np.maximum(point - boundingBox[:, 1], boundingBox[:, 0] - point) ** 2)
+    minDist = 0
 
-    # Calculate the Euclidean distance by summing the squared distances and taking the square root
-    euclidean_distance = np.sqrt(np.sum(squared_distances))
+    for dimension, i in enumerate(point):
+        ri = 0
+        if point[dimension] < boundingBox[0][dimension]:
+            ri = boundingBox[0][dimension]
+        elif point[dimension] > boundingBox[1][dimension]:
+            ri = boundingBox[1][dimension]
+        else:
+            ri = point[dimension]
+        
+        minDist += (i - ri)**2
 
-    return euclidean_distance
+    return minDist
