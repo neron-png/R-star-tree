@@ -63,7 +63,7 @@ def writeBlockToDisk(blockID, block):
         contents = datafile.read(config.BLOCKSIZE)
 
 
-def write_blocks_to_datafile():
+def writeBlocksToDatafile():
     
     # Parse the XML raw-data input file 
     # and create the block-defined datafile

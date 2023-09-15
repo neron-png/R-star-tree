@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from matplotlib.patches import Rectangle
 
 """ Which levels to display, None for all"""
-displayLevels = (0,)
+displayLevels = (0,1)
 
 displayLabels = True
 
@@ -54,7 +54,54 @@ if __name__ == "__main__":
         ax.add_patch( Rectangle(rect, rectangles_width[i][0], rectangles_width[i][1], fill=False, linewidth=rectangle_levels[i]+2, edgecolor=levelColors[rectangle_levels[i]]))
         if displayLabels:
             ax.text(rect[0], rect[1], rectangle_ids[i], fontsize=10+(rectangle_levels[i]+1))
-    plt.show()
+
+
+
+    from RTree import Rtree
+    import copy
+    import config
+
+    tempTree = Rtree(config.INDEXFILE)
+
+
+    nodes = copy.deepcopy(tempTree.nodes)
+
+    del nodes["root"]
+
+    nodes = list(nodes.values())
+
+    nodes = list( filter(lambda node: node["type"] == "l",  nodes) )
+
+    leaf_points = []
+
+    for leaf in nodes:
+        leaf_points.extend(leaf["records"])
+
+    import pandas as pd
+    points = pd.DataFrame(
+        {
+                "x": [leaf["coords"][0] for leaf in leaf_points],
+                "y": [leaf["coords"][1] for leaf in leaf_points]
+        }
+    )
+
+
+    import Queries
+    from TESTKnn import plot
+
+    query = [o[0] for o in Queries.nearestNeighborsQuery(tempTree.nodes, tempTree.nodes[tempTree.nodes["root"]["id"]], [c * config.MANTISSA for c in [41.47, 26.16]], 55, [])]
+
+    query_df = pd.DataFrame(
+        {
+                "x": [leaf["coords"][0] for leaf in query],
+                "y": [leaf["coords"][1] for leaf in query]
+        }
+    )
+
+    plot(points, query_df)
+
+
+
     
     
     # print(contents)        

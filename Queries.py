@@ -97,6 +97,13 @@ def skylineQuery(nodes: dict) -> list:
 
 
 def nearestNeighborsQuery(nodes: dict, currentNode, queryPoint, k: int, bestNeighbors: list):
+    """
+    :param nodes: dict of all r-tree nodes
+    :param currentNode: examinating node
+    :param queryPoint: list of coordinates
+    :param k: number of neighbors
+    :return: list of nearest neighbors to the queryPoint
+    """
     if currentNode["type"] == "l":
         for point in currentNode["records"]:
             distance = util.euclideanDistance(queryPoint, point["coords"])

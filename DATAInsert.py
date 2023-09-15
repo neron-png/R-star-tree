@@ -7,7 +7,7 @@ from time import time
 
 if __name__ == "__main__":
 
-    StorageHandler.write_blocks_to_datafile()
+    StorageHandler.writeBlocksToDatafile()
     dataTree = Rtree()
 
     parseData = RTReeUtil.parseDataJson() #len = 8308
@@ -26,7 +26,7 @@ if __name__ == "__main__":
         print(f"{size}: {int(1000*(end-start))}ms")
     
     
-    StorageHandler.write_blocks_to_datafile()
+    StorageHandler.writeBlocksToDatafile()
     dataTree = Rtree()
     parseData = RTReeUtil.parseDataJson() #len = 8308
     print("Bulk loading:")

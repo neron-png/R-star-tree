@@ -14,6 +14,9 @@ def plot(total, ours):
     plt.scatter(clean_total['x'], clean_total['y'], color='blue', label='Total')
     plt.scatter(ours['x'], ours['y'], color='red', label='Query')
 
+    plt.scatter(41.47*10**10, 26.16*10**10, color='orange')
+    plt.Circle((41.47*10**10,26.16*10**10),10000,fill=True)
+    
     plt.xlabel('X-axis')
     plt.ylabel('Y-axis')
     plt.title('Scatter Plot of Range Query')
@@ -51,7 +54,7 @@ if __name__ == "__main__":
 
 
 
-    query = [o[0] for o in Queries.nearestNeighborsQuery(tempTree.nodes, tempTree.nodes[tempTree.nodes["root"]["id"]], [c * config.MANTISSA for c in [41.47, 26.16]], 5, [])]
+    query = [o[0] for o in Queries.nearestNeighborsQuery(tempTree.nodes, tempTree.nodes[tempTree.nodes["root"]["id"]], [c * config.MANTISSA for c in [41.47, 26.16]], 20, [])]
 
     query_df = pd.DataFrame(
         {
