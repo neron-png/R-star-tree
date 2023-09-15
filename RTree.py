@@ -33,7 +33,7 @@ class Rtree():
                                   [[int(corner[axis] * config.MANTISSA) for axis in range(len(corner))] for _, corner in enumerate(corners)])
 
     def skylineQuery(self) -> list:
-        return RTReeUtil.getRecordsFromQueryResult(Queries.skylineQuery(self.nodes))
+        return Queries.skylineQuery(self.nodes)
 
     def nearestNeighborsQuery(self, queryPoint: list, k: int):
         if len(queryPoint) != config.NUM_OF_COORDINATES:

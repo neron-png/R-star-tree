@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     parseData = RTReeUtil.parseDataJson() #len = 8308
     
-    datasets = (1000, 2000, 3000, 4000)
+    datasets = (1000, 2000, 3500, 4000)
     print("Consecutive inserts:")
     for size in datasets:
         dataSet = parseData[:size]
