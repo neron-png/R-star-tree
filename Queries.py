@@ -108,7 +108,7 @@ def nearestNeighborsQuery(nodes: dict, currentNode, queryPoint, k: int, bestNeig
     currentNode["children"].sort(key=lambda child: util.calculateMinDistance(nodes[child]["rectangle"], queryPoint))
 
     for childId in currentNode["children"]:
-        if len(bestNeighbors) > 0 and not util.calculateMinDistance(nodes[childId]["rectangle"], queryPoint) < bestNeighbors[-1][1]:
+        if len(bestNeighbors) >= k and not util.calculateMinDistance(nodes[childId]["rectangle"], queryPoint) < bestNeighbors[-1][1]:
             break  # Skip this child, it cannot contain closer points
         bestNeighbors = nearestNeighborsQuery(nodes, nodes[childId], queryPoint, k, bestNeighbors)
         bestNeighbors.sort(key=lambda x: x[1])
