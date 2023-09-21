@@ -24,14 +24,17 @@ if __name__ == "__main__":
     StorageHandler.writeRtreeToFile(tree.nodes)
 
     ''' Queries '''
-    range = [[41.5, 26.5],[42.1, 26.52]]
+    range = [[41.5, 26.5],[42.1, 26.523]]
     rangeQueryResults = tree.rangeQuery(corners=range)
+    print("Range query results: ")
     print(rangeQueryResults)
-   
+    
     skylineQueryResults = tree.skylineQuery()
+    print("Skyline query results: ")
     print(skylineQueryResults)
 
     point = [41.47, 26.16]
     knnQueryResults = tree.nearestNeighborsQuery(queryPoint=point, k=100)
+    print("KNN query results: ")
     print(knnQueryResults)
 
