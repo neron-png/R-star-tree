@@ -369,16 +369,6 @@ def euclideanDistance(point1, point2):
     
     return dist**(1/2)
 
-    # Ensure both points are NumPy arrays for element-wise operations
-    point1 = np.array(point1)
-    point2 = np.array(point2)
-
-    # Calculate the squared differences element-wise
-    squared_diff = (point1 - point2) ** 2
-
-    # Sum up the squared differences and take the square root
-    distance = np.sqrt(np.sum(squared_diff))
-    return distance
 
 def calculateMinDistance(boundingBox, point):
     minDist = 0
